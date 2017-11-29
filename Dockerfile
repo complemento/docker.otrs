@@ -5,7 +5,9 @@ MAINTAINER Complemento <https://www.complemento.net.br>
 ENV OTRS_VERSION=6.0.1
 
 RUN apt-get update && \
-    apt-get install -y apt-utils libterm-readline-perl-perl && \
+    apt-get install -y supervisor \
+    apt-utils \
+    libterm-readline-perl-perl && \
     apt-get install -y locales && \
     locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -31,13 +33,7 @@ COPY link.pl /opt/src/
 
 RUN chmod 755 /opt/src/link.pl && \
     mkdir /opt/otrs && \
-    chown otrs:www-data /opt/otrs && \
-    su -c "/opt/src/link.pl /opt/src/otrs /opt/otrs" -s /bin/bash otrs
-
-# Create missing directories from GIT
-RUN mkdir /opt/otrs/var/tmp && \
-    chown otrs:www-data /opt/otrs/var/tmp && \
-    mkdir otrs:www-data /opt/otrs/var/article
+    chown otrs:www-data /opt/otrs
 
 # perl modules
 RUN apt-get install -y  libarchive-zip-perl \
@@ -68,18 +64,26 @@ RUN apt-get install -y  libarchive-zip-perl \
                         libyaml-libyaml-perl
 
 
-RUN rm /opt/otrs/bin/otrs.SetPermissions.pl && \
-    cp /opt/src/otrs/bin/otrs.SetPermissions.pl /opt/otrs/bin/otrs.SetPermissions.pl && \
-    cd /opt/otrs/; /opt/otrs/bin/otrs.SetPermissions.pl --web-group=www-data
+RUN /opt/src/otrs/bin/otrs.SetPermissions.pl --web-group=www-data
 
-RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf && \
-    a2ensite otrs
+RUN ln -s /opt/src/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf && \
+    a2ensite otrs && \
+    a2dismod mpm_event && \
+    a2enmod mpm_prefork && \
+    a2enmod headers
 
+# Supervisor
+RUN mkdir -p /var/log/supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Setup a cron for checking when OTRS is already installed, then start otrs Cron
+COPY daemonstarter.sh /opt/src/
+RUN chmod +x /opt/src/daemonstarter.sh
+RUN echo "* * * * * /opt/src/daemonstarter.sh" | crontab -
 
 COPY otrs.sh /opt/src/
 RUN chmod 755 /opt/src/otrs.sh
 
 EXPOSE 80
-ENTRYPOINT ["/opt/src/otrs.sh"]
-CMD ["/opt/src/otrs.sh"]
 
+CMD ["/opt/src/otrs.sh"]
