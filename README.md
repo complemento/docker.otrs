@@ -14,7 +14,7 @@ http://www.complemento.net.br
 
 About this Image
 ----------------
-This image aim to make a fresh new application install of OTRS. You will need to create another mysql container for your own (or use an traditional mysql server/service).
+This image aims to make a fresh new application install of OTRS. You will need to create another mysql container for your own (or use an traditional mysql server/service).
 
 If you want a really easy OTRS Docker installation for testing purposes, please check this other option, with Database deployment included in the same container:
 
@@ -28,7 +28,7 @@ If you just want to run a docker container with our OTRS 6 flavor, follow these 
 
  2. Run the following command:
 
-`docker run -tid -v otrs_data:/opt/otrs -p 80:80 ligero/otrs`
+`docker run -d -v otrs_data:/opt/otrs -p 80:80 ligero/otrs`
 
 If you are running your docker container on your localhost, go to http://localhost/otrs/installer.pl to proceed with the rest of the installation.
 
