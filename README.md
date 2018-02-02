@@ -1,4 +1,5 @@
-﻿[![N|Solid](https://i1.wp.com/complemento.net.br/wp-content/uploads/2017/11/logo_otrs6free.png?fit=300%2C68&ssl=1)]()
+﻿
+[![N|Solid](https://i1.wp.com/complemento.net.br/wp-content/uploads/2017/11/logo_otrs6free.png?fit=300%2C68&ssl=1)]()
 
 OTRS Docker Installation
 ========================
@@ -30,5 +31,19 @@ If you just want to run a docker container with our OTRS 6 flavor, follow these 
 
 `docker run -d -v otrs_data:/opt/otrs -p 80:80 ligero/otrs`
 
+ - In production environments, we recommend you to set the version of your choice:
+ 
+ `docker run -d -v otrs_data:/opt/otrs -p 80:80 ligero/otrs:6.0.4`
+ 
+ Currently available versions:
+ - 6.0.4
+ - 5.0.26
+
+Older not maintained versions:
+ - 6.0.3
+ - 6.0.2
+ - 6.0.1
+
+ 
 If you are running your docker container on your localhost, go to http://localhost/otrs/installer.pl to proceed with the rest of the installation.
 
