@@ -45,4 +45,3 @@ Older not maintained versions:
 
  
 If you are running your docker container on your localhost, go to http://localhost/otrs/installer.pl to proceed with the rest of the installation.
-
