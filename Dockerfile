@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 MAINTAINER Complemento <https://www.complemento.net.br>
 
 # Definitions
-ENV OTRS_VERSION=5.0.26
+ENV OTRS_VERSION=6.0.4
 
 RUN apt-get update && \
     apt-get install -y supervisor \
@@ -27,7 +27,7 @@ RUN mkdir /opt/src && \
     su -c "git clone -b rel-$(echo $OTRS_VERSION | sed --expression='s/\./_/g') \
     --single-branch https://github.com/OTRS/otrs.git" -s /bin/bash otrs
 
-RUN sed -i -e "s/5.0.x git/${OTRS_VERSION}/g" /opt/src/otrs/RELEASE
+RUN sed -i -e "s/6.0.x git/${OTRS_VERSION}/g" /opt/src/otrs/RELEASE
 
 COPY link.pl /opt/src/
 

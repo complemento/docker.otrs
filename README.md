@@ -1,5 +1,4 @@
-﻿
-[![N|Solid](https://i1.wp.com/complemento.net.br/wp-content/uploads/2017/11/logo_otrs6free.png?fit=300%2C68&ssl=1)]()
+﻿[![N|Solid](https://i1.wp.com/complemento.net.br/wp-content/uploads/2017/11/logo_otrs6free.png?fit=300%2C68&ssl=1)]()
 
 OTRS Docker Installation
 ========================
@@ -46,4 +45,3 @@ Older not maintained versions:
 
  
 If you are running your docker container on your localhost, go to http://localhost/otrs/installer.pl to proceed with the rest of the installation.
-
