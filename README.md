@@ -42,6 +42,20 @@ Older not maintained versions:
  - 6.0.3
  - 6.0.2
  - 6.0.1
-
  
 If you are running your docker container on your localhost, go to http://localhost/otrs/installer.pl to proceed with the rest of the installation.
+
+
+A more complex way of running this image:
+```
+docker run -d --name sd_otrs_app \
+-v /opt/docker/ServiceDesk/app/mail/:/etc/mail \
+-v /opt/docker/ServiceDesk/app/otrs:/opt/otrs \
+-v /usr/share/zoneinfo/America/Sao_Paulo:/etc/localtime:ro \
+-P --network=ligero_complemento ligero/otrs:6.0.4
+```
+
+You can use OTRS's SMTP protocols for sending emails. This image also contains a sendmail service since it's the recommended way to send emails in OTRS production systems.
+
+If you want to use it instead of OTRS's SMTP protocols, you may map a /etc/mail with sendmail configurations (this is for experts), or access the container and make your own sendmail configuration.
+
