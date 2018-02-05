@@ -14,7 +14,7 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-RUN apt-get install -y apache2 git bash-completion cron
+RUN apt-get install -y apache2 git bash-completion cron sendmail
 
 # CREATE OTRS USER
 RUN useradd -d /opt/otrs -c 'OTRS user' otrs && \
