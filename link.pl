@@ -28,7 +28,7 @@ link.pl <source-module-folder> <otrs-folder>
 This script installs a given OTRS module into the OTRS framework by creating
 appropriate links.
 Beware that code from the .sopm file is not executed.
-Existing files are backupped by adding the extension '.old'.
+
 So this script can be used for an already installed module, when linking
 files from CVS checkout directory.
 Please send any questions, suggestions & complaints to <ot@otrs.com>
@@ -38,7 +38,7 @@ When running the scripts twice, the '.old' files might be overwritten.
 
 use strict;
 use warnings;
-
+use Data::Dumper;
 use Getopt::Long;
 use Pod::Usage;
 use File::Spec ();
@@ -101,6 +101,12 @@ sub Clean {
 sub R {
     my $In   = shift;
     my @List = glob("$In/*");
+    
+    my $cmd = "cd /opt/otrs && /opt/otrs/bin/otrs.Console.pl Admin::Package::ListInstalledFiles --allow-root|grep ':' | awk -F ': ' '{print \$2}'";
+    my @PackageFileList = `$cmd`;
+    chomp @PackageFileList;
+    my %PackageFileListHash = map { $_ => 1 } @PackageFileList;
+
     for my $File (@List) {
         $File =~ s/\/\//\//g;
 
@@ -147,18 +153,23 @@ sub R {
             elsif ( !-e $OrigFile ) {
                 die "ERROR: No such orig file: $OrigFile";
             }
-            # COMPLEMENTO: Creates the link. Check if it's not a symlink. Maybe it's a common file
             # installed by an AddOn such OTRS::ITSM
-            if ( !-e "$Dest/$File" ) {
+
+            my $F = substr($File,1);
+
+            # If file is not part of a package
+            if ( ! $PackageFileListHash{$F} ) {
+                # Then remove it if exists
+                unlink("$Dest/$File");
+                # Try to link OTRS Source
                 if ( !symlink( $OrigFile, "$Dest/$File" ) ) {
                     die "ERROR: Can't $File link: $!";
+                } else {
+                    print "NOTICE: Link: $OrigFile -> \n";
+                    print "NOTICE:       $Dest/$File\n";
                 }
-            }
-            # EO Complemento
-            else {
-                print "NOTICE: Link: $OrigFile -> \n";
-                print "NOTICE:       $Dest/$File\n";
-            }
+            }             
+
         }
     }
 }
