@@ -32,13 +32,14 @@ If you just want to run a docker container with our OTRS 6 flavor, follow these 
 
  - In production environments, we recommend you to set the version of your choice:
  
- `docker run -d -v otrs_data:/opt/otrs -p 80:80 ligero/otrs:6.0.4`
+ `docker run -d -v otrs_data:/opt/otrs -p 80:80 ligero/otrs:6.0.5`
  
  Currently available versions:
- - 6.0.4
+ - 6.0.5
  - 5.0.26
 
 Older not maintained versions:
+ - 6.0.4
  - 6.0.3
  - 6.0.2
  - 6.0.1

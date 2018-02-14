@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ ! -f "/installed" ]  ; then
+# Adjustment for Sendmail
+line=$(cat /etc/hosts | grep `hostname`)
+line2=$(echo $line | awk '{print $2}')
+echo "$line $line2.localdomain" >> /etc/hosts
 
-    # Adjustment for Sendmail
-    line=$(cat /etc/hosts | grep `hostname`)
-    line2=$(echo $line | awk '{print $2}')
-    echo "$line $line2.localdomain" >> /etc/hosts
+if [ ! -f "/installed" ]  ; then
 
     # OTRS installation
     su -c "/opt/src/link.pl /opt/src/otrs /opt/otrs" -s /bin/bash otrs
