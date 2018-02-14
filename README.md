@@ -53,7 +53,7 @@ docker run -d --name sd_otrs_app \
 -v /opt/docker/ServiceDesk/app/mail/:/etc/mail \
 -v /opt/docker/ServiceDesk/app/otrs:/opt/otrs \
 -v /usr/share/zoneinfo/America/Sao_Paulo:/etc/localtime:ro \
--P --network=ligero_complemento ligero/otrs:6.0.4
+-P --network=ligero_complemento ligero/otrs:6.0.5
 ```
 
 You can use OTRS's SMTP protocols for sending emails. This image also contains a sendmail service since it's the recommended way to send emails in OTRS production systems.
