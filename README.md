@@ -32,13 +32,14 @@ If you just want to run a docker container with our OTRS 6 flavor, follow these 
 
  - In production environments, we recommend you to set the version of your choice:
  
- `docker run -d -v otrs_data:/opt/otrs -p 80:80 ligero/otrs:6.0.5`
+ `docker run -d -v otrs_data:/opt/otrs -p 80:80 ligero/otrs:`
  
  Currently available versions:
- - 6.0.5
+ - 
  - 5.0.26
 
 Older not maintained versions:
+ - 6.0.5
  - 6.0.4
  - 6.0.3
  - 6.0.2
@@ -53,7 +54,7 @@ docker run -d --name sd_otrs_app \
 -v /opt/docker/ServiceDesk/app/mail/:/etc/mail \
 -v /opt/docker/ServiceDesk/app/otrs:/opt/otrs \
 -v /usr/share/zoneinfo/America/Sao_Paulo:/etc/localtime:ro \
--P --network=ligero_complemento ligero/otrs:6.0.5
+-P --network=ligero_complemento ligero/otrs:
 ```
 
 You can use OTRS's SMTP protocols for sending emails. This image also contains a sendmail service since it's the recommended way to send emails in OTRS production systems.
