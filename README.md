@@ -40,6 +40,7 @@ If you just want to run a docker container with our OTRS 6 flavor, follow these 
 
 Older not maintained versions:
  - 
+ - 
  - 6.0.5
  - 6.0.4
  - 6.0.3
