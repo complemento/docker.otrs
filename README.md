@@ -42,6 +42,7 @@ Older not maintained versions:
  - 
  - 
  - 
+ - 
  - 6.0.5
  - 6.0.4
  - 6.0.3
