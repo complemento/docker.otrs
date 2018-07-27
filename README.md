@@ -59,7 +59,7 @@ Then go back to the stack folder:
 
 And finally, run your Stack!
 
-`docker-compose up`
+`docker-compose up -d`
 
 Then you can check if the system could start by it self:
 
