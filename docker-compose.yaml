@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+  otrs:
+    image: ligero/otrs
+    restart: unless-stopped
+    volumes:
+      - ./data/otrs:/opt/otrs
+      - /etc/localtime:/etc/localtime:ro
+      - ./otrs_addons:/opt/otrs_addons
+    environment:
+      - MYSQL_HOSTNAME=mysql
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=ligero
+      - CUSTOMER_ID=ligero
+      - OTRS_SYSTEM_ID=10
+      - OTRS_DEFAULT_LANGUAGE=en
+      - OTRS_FQDN=myotrs.ligero.online
+      - INSTALL=1
+#      - DONT_INSTALL_LIGERO_ADDONS=1
+    depends_on:
+      - mysql
+    expose:
+      - 80
+    # ports:
+    #   - 80:80
+  mysql:
+    image: mysql:5.7
+    restart: unless-stopped
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=ligero
+    command:
+      - --max_allowed_packet=65737518
+      - --innodb_log_file_size=269331648
+      - --query_cache_size=36737518
+      - --character_set_server=utf8
+      - --bind-address=0.0.0.0
