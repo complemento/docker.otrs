@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 MAINTAINER Complemento <https://www.complemento.net.br>
 
 # Definitions
-ENV OTRS_VERSION=6.0.9
+ENV OTRS_VERSION=6.0.10
 ENV LIGERO_REPOSITORY=6.0.0
 
 RUN apt-get update && \
