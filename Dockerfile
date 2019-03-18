@@ -1,96 +1,80 @@
-FROM ubuntu:16.04
-MAINTAINER Complemento <https://www.complemento.net.br>
+FROM nginx:perl
 
-# Definitions
-ENV OTRS_VERSION=6.0.10
-ENV LIGERO_REPOSITORY=6.0.0
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
 
-RUN apt-get update && \
-    apt-get install -y supervisor \
-    apt-utils \
-    libterm-readline-perl-perl && \
-    apt-get install -y locales && \
-    locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-
-RUN apt-get install -y apache2 git bash-completion cron sendmail curl vim wget mysql-client
+# install deps
+RUN apt-get update \
+    && apt-get install -y locales \
+    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "pt_BR.UTF-8 UTF-8" >> /etc/locale.gen \
+    && locale-gen \
+    && apt-get install -y \
+        git \
+        bash-completion \
+        cron \
+        apt-utils curl \
+        libfcgi-perl \
+        libterm-readline-perl-perl \
+        libarchive-zip-perl \
+        libcrypt-eksblowfish-perl \
+        libcrypt-ssleay-perl \
+        libtimedate-perl \
+        libdatetime-perl \
+        libdbi-perl \
+        libdbd-mysql-perl \
+        libdbd-odbc-perl \
+        libdbd-pg-perl \
+        libencode-hanextra-perl \
+        libio-socket-ssl-perl \
+        libjson-xs-perl \
+        libmail-imapclient-perl \
+        libio-socket-ssl-perl \
+        libauthen-sasl-perl \
+        libauthen-ntlm-perl \
+        libnet-dns-perl \
+        libnet-ldap-perl \
+        libtemplate-perl \
+        libtemplate-perl \
+        libtext-csv-xs-perl \
+        libxml-libxml-perl \
+        libxml-libxslt-perl \
+        libxml-parser-perl \
+        libyaml-libyaml-perl \
+        mysql-client \
+        make gcc procps sudo \
+    && apt-get autoclean
 
 # CREATE OTRS USER
-RUN useradd -d /opt/otrs -c 'OTRS user' otrs && \
-    usermod -a -G www-data otrs && \
-    usermod -a -G otrs www-data
+RUN useradd -d /opt/otrs -c 'OTRS user' otrs \
+    && usermod -a -G www-data otrs \
+    && usermod -a -G otrs www-data \
+    && usermod -a -G nginx otrs \
+    && usermod -a -G otrs nginx \
+    && usermod -a -G www-data nginx 
 
-RUN mkdir /opt/src && \
-    cd /opt/src/ && \
-    chown otrs:www-data /opt/src && \
-    su -c "git clone -b rel-$(echo $OTRS_VERSION | sed --expression='s/\./_/g') \
-    --single-branch https://github.com/OTRS/otrs.git" -s /bin/bash otrs
+# fastcgi
+RUN git clone https://github.com/mdll/otrs-fcgi.git \
+    && cp otrs-fcgi/bin/fastcgi-wrapper.pl /usr/local/bin/ \
+    && chmod +x /usr/local/bin/fastcgi-wrapper.pl \
+    && cp otrs-fcgi/init.d/otrs-fcgi /etc/init.d/ \
+    && chmod +x /etc/init.d/otrs-fcgi \
+    && mkdir /var/run/otrs/ \
+    && chown www-data /var/run/otrs/
 
-RUN sed -i -e "s/6.0.x git/${OTRS_VERSION}/g" /opt/src/otrs/RELEASE
-
-COPY link.pl /opt/src/
-
-RUN chmod 755 /opt/src/link.pl && \
-    mkdir /opt/otrs && \
-    chown otrs:www-data /opt/otrs
-
-# perl modules
-RUN apt-get install -y  libarchive-zip-perl \
-                        libcrypt-eksblowfish-perl \
-                        libcrypt-ssleay-perl \
-                        libtimedate-perl \
-                        libdatetime-perl \
-                        libdbi-perl \
-                        libdbd-mysql-perl \
-                        libdbd-odbc-perl \
-                        libdbd-pg-perl \
-                        libencode-hanextra-perl \
-                        libio-socket-ssl-perl \
-                        libjson-xs-perl \
-                        libmail-imapclient-perl \
-                        libio-socket-ssl-perl \
-                        libauthen-sasl-perl \
-                        libauthen-ntlm-perl \
-                        libapache2-mod-perl2 \
-                        libnet-dns-perl \
-                        libnet-ldap-perl \
-                        libtemplate-perl \
-                        libtemplate-perl \
-                        libtext-csv-xs-perl \
-                        libxml-libxml-perl \
-                        libxml-libxslt-perl \
-                        libxml-parser-perl \
-                        libyaml-libyaml-perl
+# OTRS code
+RUN cd /opt/ && git clone -b rel-6_0 --single-branch https://github.com/OTRS/otrs.git \
+    && /opt/otrs/bin/otrs.SetPermissions.pl
 
 
-RUN /opt/src/otrs/bin/otrs.SetPermissions.pl --web-group=www-data
+# Install Elasticsearch Perl
+#RUN export PERL_MB_OPT=; export PERL_MM_OPT=; export PERL_MM_USE_DEFAULT=1;perl -MCPAN -e 'install Search::Elasticsearch'
 
-RUN ln -s /opt/src/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf && \
-    a2ensite otrs && \
-    a2dismod mpm_event && \
-    a2enmod mpm_prefork && \
-    a2enmod headers
+COPY otrs-nginx.conf /etc/nginx/conf.d/default.conf
+COPY Config.pm /opt/otrs/Kernel/Config.pm
+RUN chown otrs:nginx /opt/otrs/Kernel/Config.pm
 
-# Supervisor
-RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+VOLUME [ "/opt/otrs" ]
 
-# Setup a cron for checking when OTRS is already installed, then start otrs Cron
-COPY daemonstarter.sh /opt/src/
-RUN chmod +x /opt/src/daemonstarter.sh
-RUN echo "* * * * * /opt/src/daemonstarter.sh" | crontab -
-
-COPY otrs.sh /opt/src/
-RUN chmod 755 /opt/src/otrs.sh
-
-RUN mkdir /opt/ligero_addons/ && chown otrs:www-data /opt/ligero_addons
-
-ADD https://addons.ligerosmart.com/AddOns/6.0/Community/LigeroRepository/LigeroRepository-${LIGERO_REPOSITORY}.opm /opt/ligero_addons/
-
-RUN chown otrs:www-data /opt/ligero_addons -R
-
-EXPOSE 80
-
-CMD ["/opt/src/otrs.sh"]
+CMD /etc/init.d/otrs-fcgi start; nginx -g 'daemon off;'
