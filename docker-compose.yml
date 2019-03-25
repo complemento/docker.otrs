@@ -6,6 +6,7 @@ services:
         environment: 
           - OTRS_CUSTOMER_ID=test
           - OTRS_ORGANIZATION=test
+          - OTRS_CUSTOMER_HEADLINE=test
           - OTRS_SYSTEM_ID=10
           - OTRS_DEFAULT_LANGUAGE=pt_BR
           - OTRS_FQDN=${HOSTNAME}
@@ -26,6 +27,7 @@ services:
         environment: 
           - OTRS_CUSTOMER_ID=test
           - OTRS_ORGANIZATION=test
+          - OTRS_CUSTOMER_HEADLINE=test
           - OTRS_SYSTEM_ID=10
           - OTRS_DEFAULT_LANGUAGE=pt_BR
           - OTRS_FQDN=${HOSTNAME}

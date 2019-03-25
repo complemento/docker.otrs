@@ -83,7 +83,7 @@ sub Load {
 
     $Self->{'FQDN'} = $ENV{OTRS_FQDN};
     $Self->{'Organization'} = $ENV{OTRS_ORGANIZATION};
-    $Self->{'CustomerHeadline'} = $ENV{OTRS_ORGANIZATION};
+    $Self->{'CustomerHeadline'} = $ENV{OTRS_CUSTOMER_HEADLINE};
     $Self->{'SystemID'} = $ENV{OTRS_SYSTEM_ID};
     $Self->{'DefaultLanguage'} = $ENV{OTRS_DEFAULT_LANGUAGE};
 
