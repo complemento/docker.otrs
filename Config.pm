@@ -87,6 +87,10 @@ sub Load {
     $Self->{'SystemID'} = $ENV{OTRS_SYSTEM_ID};
     $Self->{'DefaultLanguage'} = $ENV{OTRS_DEFAULT_LANGUAGE};
 
+    # Node ID from ENV
+    $Self->{'NodeID'} = $ENV{OTRS_NODE_ID};
+
+
     # ---------------------------------------------------- #
     # ---------------------------------------------------- #
     #                                                      #

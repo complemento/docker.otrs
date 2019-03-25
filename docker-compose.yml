@@ -13,6 +13,7 @@ services:
             - OTRS_DATABASE_USER=root
             - OTRS_DATABASE_PASSWORD=xK3MPnLb
             - OTRS_ROOT_PASSWORD=uBpeRvRLZhPPKZsr
+            - OTRS_NODE_ID={{ .Tasks.Slot }}
         ports:
          - 80:80
         volumes:
