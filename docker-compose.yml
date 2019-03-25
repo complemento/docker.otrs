@@ -4,18 +4,36 @@ services:
         image: ligero/otrs:nginx
         #build: .
         environment: 
-            - OTRS_CUSTOMER_ID=test
-            - OTRS_SYSTEM_ID=10
-            - OTRS_DEFAULT_LANGUAGE=pt_BR
-            - OTRS_FQDN=${HOSTNAME}
-            - OTRS_DATABASE_HOST=mysql
-            - OTRS_DATABASE_NAME=otrs
-            - OTRS_DATABASE_USER=root
-            - OTRS_DATABASE_PASSWORD=xK3MPnLb
-            - OTRS_ROOT_PASSWORD=uBpeRvRLZhPPKZsr
-            - OTRS_NODE_ID={{ .Tasks.Slot }}
+          - OTRS_CUSTOMER_ID=test
+          - OTRS_SYSTEM_ID=10
+          - OTRS_DEFAULT_LANGUAGE=pt_BR
+          - OTRS_FQDN=${HOSTNAME}
+          - OTRS_DATABASE_HOST=mysql
+          - OTRS_DATABASE_NAME=otrs
+          - OTRS_DATABASE_USER=otrs
+          - OTRS_DATABASE_PASSWORD=CFTls5DVTRhkYj2i
+          - OTRS_ROOT_PASSWORD=123456
+          - OTRS_NODE_ID={{ .Task.Slot }}
         ports:
-         - 80:80
+          - 80:80
+        volumes:
+          - app:/opt/otrs
+         
+    cron:
+        image: ligero/otrs:nginx
+        #build: .
+        environment: 
+          - OTRS_CUSTOMER_ID=test
+          - OTRS_SYSTEM_ID=10
+          - OTRS_DEFAULT_LANGUAGE=pt_BR
+          - OTRS_FQDN=${HOSTNAME}
+          - OTRS_DATABASE_HOST=mysql
+          - OTRS_DATABASE_NAME=otrs
+          - OTRS_DATABASE_USER=otrs
+          - OTRS_DATABASE_PASSWORD=CFTls5DVTRhkYj2i
+          - OTRS_ROOT_PASSWORD=123456
+          - OTRS_NODE_ID={{ .Task.Slot }}
+        command: "/usr/sbin/cron -f -L 15"
         volumes:
          - app:/opt/otrs
 
@@ -26,6 +44,8 @@ services:
         environment:
         - MYSQL_ROOT_PASSWORD=xK3MPnLb
         - MYSQL_DATABASE=otrs
+        - MYSQL_USER=otrs
+        - MYSQL_PASSWORD=CFTls5DVTRhkYj2i
         command:
         - --max_allowed_packet=64M
         - --innodb_log_file_size=269331648
