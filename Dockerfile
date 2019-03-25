@@ -44,6 +44,7 @@ RUN apt-get update \
         libyaml-libyaml-perl \
         mysql-client \
         make gcc procps sudo \
+        build-essential libtry-tiny-perl libyaml-perl \
     && apt-get autoclean
 
 # CREATE OTRS USER
@@ -68,8 +69,8 @@ RUN cd /opt/ && git clone -b rel-6_0 --single-branch https://github.com/OTRS/otr
     && /opt/otrs/bin/otrs.SetPermissions.pl
 
 
-# Install Elasticsearch Perl
-#RUN export PERL_MB_OPT=; export PERL_MM_OPT=; export PERL_MM_USE_DEFAULT=1;perl -MCPAN -e 'install Search::Elasticsearch'
+# Install Elasticsearch Module 
+RUN export PERL_MB_OPT=; export PERL_MM_OPT=; export PERL_MM_USE_DEFAULT=1;perl -MCPAN -e 'install Search::Elasticsearch'
 
 COPY otrs-nginx.conf /etc/nginx/conf.d/default.conf
 COPY Config.pm /opt/otrs/Kernel/Config.pm
