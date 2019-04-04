@@ -63,6 +63,7 @@ RUN apt-get update \
         supervisor \
         sudo \
         unzip \
+        vim-tiny \
         zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* 
