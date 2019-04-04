@@ -109,7 +109,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
                 /opt/otrs/var/tmp \
                 /opt/otrs/var/packages \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
-    && bin/Cron.sh start root \
+    && bin/Cron.sh start otrs \
     && echo "source /etc/profile.d/bash_completion.sh" >> .bashrc \
     && chmod +x .bashrc
 
