@@ -1,9 +1,9 @@
 FROM ubuntu:16.04
 
-ENV OTRS_VERSION=6.0.17 \
-    ITSM_VERSION=6.0.17 \
-    FAQ_VERSION=6.0.17 \
-    SURVEY_VERSION=6.0.11 \
+ENV OTRS_VERSION=5.0.34 \
+    ITSM_VERSION=5.0.34 \
+    FAQ_VERSION=5.0.21 \
+    SURVEY_VERSION=5.0.12 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 
@@ -63,6 +63,7 @@ RUN apt-get update \
         supervisor \
         sudo \
         unzip \
+        vim-tiny \
         zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* 
