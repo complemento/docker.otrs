@@ -30,38 +30,43 @@ sub Load {
     # ---------------------------------------------------- #
 
     # The database host
-    $Self->{DatabaseHost} = $ENV{OTRS_DATABASE_HOST};
+    $Self->{DatabaseHost} = $ENV{APP_DatabaseHost};
 
     # The database name
-    $Self->{Database} = $ENV{OTRS_DATABASE_NAME};
+    $Self->{Database} = $ENV{APP_Database};
 
     # The database user
-    $Self->{DatabaseUser} = $ENV{OTRS_DATABASE_USER};
+    $Self->{DatabaseUser} = $ENV{APP_DatabaseUser};
 
     # The password of database user. You also can use bin/otrs.Console.pl Maint::Database::PasswordCrypt
     # for crypted passwords
-    $Self->{DatabasePw} = $ENV{OTRS_DATABASE_PASSWORD};
+    $Self->{DatabasePw} = $ENV{APP_DatabasePw};
 
     # The database DSN for MySQL ==> more: "perldoc DBD::mysql"
-    $Self->{'DatabaseDSN'} = "DBI:mysql:database=$Self->{Database};host=$Self->{DatabaseHost}";
-
+    if($ENV{APP_DatabaseType} eq 'mysql') {
+        $Self->{'DatabaseDSN'} = "DBI:mysql:database=$Self->{Database};host=$Self->{DatabaseHost}";
+    }
+    
     # The database DSN for PostgreSQL ==> more: "perldoc DBD::Pg"
     # if you want to use a local socket connection
-#    $Self->{DatabaseDSN} = "DBI:Pg:dbname=$Self->{Database};";
+    #$Self->{DatabaseDSN} = "DBI:Pg:dbname=$Self->{Database};";
     # if you want to use a TCP/IP connection
-#    $Self->{DatabaseDSN} = "DBI:Pg:dbname=$Self->{Database};host=$Self->{DatabaseHost};";
-
+    if($ENV{APP_DatabaseType} eq 'postgresql') {
+        $Self->{DatabaseDSN} = "DBI:Pg:dbname=$Self->{Database};host=$Self->{DatabaseHost};";
+    }
     # The database DSN for Microsoft SQL Server - only supported if OTRS is
     # installed on Windows as well
-#    $Self->{DatabaseDSN} = "DBI:ODBC:driver={SQL Server};Database=$Self->{Database};Server=$Self->{DatabaseHost},1433";
-
+    if($ENV{APP_DatabaseType} eq 'odbc') {
+        $Self->{DatabaseDSN} = "DBI:ODBC:driver={SQL Server};Database=$Self->{Database};Server=$Self->{DatabaseHost},1433";
+    }
     # The database DSN for Oracle ==> more: "perldoc DBD::oracle"
-#    $Self->{DatabaseDSN} = "DBI:Oracle://$Self->{DatabaseHost}:1521/$Self->{Database}";
-#
-#    $ENV{ORACLE_HOME}     = '/path/to/your/oracle';
-#    $ENV{NLS_DATE_FORMAT} = 'YYYY-MM-DD HH24:MI:SS';
-#    $ENV{NLS_LANG}        = 'AMERICAN_AMERICA.AL32UTF8';
-
+    # TODO: install DBD::oracle
+    #if($ENV{APP_DatabaseType}=='oracle') {
+        #$Self->{DatabaseDSN} = "DBI:Oracle://$Self->{DatabaseHost}:1521/$Self->{Database}";
+        #$ENV{ORACLE_HOME}     = '/path/to/your/oracle';
+        #$ENV{NLS_DATE_FORMAT} = 'YYYY-MM-DD HH24:MI:SS';
+        #$ENV{NLS_LANG}        = 'AMERICAN_AMERICA.AL32UTF8';
+    #}
     # ---------------------------------------------------- #
     # fs root directory
     # ---------------------------------------------------- #
@@ -81,14 +86,12 @@ sub Load {
     # ---------------------------------------------------- #
     # $DIBI$
 
-    $Self->{'FQDN'} = $ENV{OTRS_FQDN};
-    $Self->{'Organization'} = $ENV{OTRS_ORGANIZATION};
-    $Self->{'CustomerHeadline'} = $ENV{OTRS_CUSTOMER_HEADLINE};
-    $Self->{'SystemID'} = $ENV{OTRS_SYSTEM_ID};
-    $Self->{'DefaultLanguage'} = $ENV{OTRS_DEFAULT_LANGUAGE};
+    #$Self->{'FQDN'} = $ENV{APP_FQDN};
 
     # Node ID from ENV
-    $Self->{'NodeID'} = $ENV{OTRS_NODE_ID};
+    $Self->{'NodeID'} = $ENV{APP_NodeID};
+    
+    $Self->{'SystemID'} = $ENV{APP_SystemID};
 
 
     # ---------------------------------------------------- #

@@ -145,10 +145,3 @@ docker run -d --name sd_otrs_app \
 ligero/otrs
 ```
 
-
-# OTRS with NGINX - for TESTS ONLY!
-Tagged image nginx is a configuration using NGINX+fastcgi to run perl scripts
-
-
-## TODO:
-Read environment values from S.O. environment to NGINX configuration. See otrs-nginx.conf
