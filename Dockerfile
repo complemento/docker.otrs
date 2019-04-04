@@ -120,4 +120,6 @@ RUN cd /opt/otrs/var/packages \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
 
+EXPOSE 80
+
 CMD supervisord
