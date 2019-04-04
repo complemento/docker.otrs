@@ -90,9 +90,6 @@ sub Load {
 
     # Node ID from ENV
     $Self->{'NodeID'} = $ENV{APP_NodeID};
-    
-    $Self->{'SystemID'} = $ENV{APP_SystemID};
-
 
     # ---------------------------------------------------- #
     # ---------------------------------------------------- #
