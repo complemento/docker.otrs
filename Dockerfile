@@ -26,44 +26,42 @@ RUN apt-get update \
         curl \
         gettext \
         git-core \
-        libexpat1-dev \
-        libgdbm3 \
-        libxml2-utils \
+        libapache2-mod-perl2 \
         libarchive-zip-perl \
+        libauthen-ntlm-perl \
+        libauthen-sasl-perl \
         libcrypt-eksblowfish-perl \
         libcrypt-ssleay-perl \
-        libtimedate-perl \
         libdatetime-perl \
-        libdbi-perl \
         libdbd-mysql-perl \
         libdbd-odbc-perl \
         libdbd-pg-perl \
+        libdbi-perl \
         libencode-hanextra-perl \
+        libexpat1-dev \
+        libgdbm3 \
         libio-socket-ssl-perl \
         libjson-xs-perl \
         libmail-imapclient-perl \
-        libio-socket-ssl-perl \
-        libauthen-sasl-perl \
-        libauthen-ntlm-perl \
-        libapache2-mod-perl2 \
         libnet-dns-perl \
         libnet-ldap-perl \
         libssl-dev \
         libtemplate-perl \
-        libtemplate-perl \
+        libterm-readline-perl-perl \
         libtext-csv-xs-perl \
+        libtimedate-perl \
         libxml-libxml-perl \
         libxml-libxslt-perl \
         libxml-parser-perl \
+        libxml2-utils \
         libyaml-libyaml-perl \
-        libterm-readline-perl-perl \
         mysql-client \
-        postgresql-client \
         perl \
-        supervisor \
+        postgresql-client \
         sudo \
+        supervisor \
         unzip \
-        vim-tiny \
+        vim \
         zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* 
