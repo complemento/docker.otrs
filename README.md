@@ -145,3 +145,9 @@ docker run -d --name sd_otrs_app \
 ligero/otrs
 ```
 
+### AddOns installed on first run
+
+* GeneralCatalog
+* ITSM Bundle
+* FAQ
+* Survey

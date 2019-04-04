@@ -8,12 +8,13 @@ ENV OTRS_VERSION=6.0.17 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 
 
+SHELL ["/bin/bash", "-c"]
+
 # Language
 RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
     && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
     && echo "pt_BR.UTF-8 UTF-8" >> /etc/locale.gen \
-    && locale-gen en_US.UTF-8 \
-    && locale-gen pt_BR.UTF-8
+    && locale-gen 
 
 # Packages
 RUN apt-get update \
@@ -67,16 +68,18 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* 
 
 # Extra perl modules
-RUN curl -L https://cpanmin.us | perl - --sudo App::cpanminus \
+RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
     && cpanm --sudo --quiet --notest \ 
             Cache::Memcached::Fast \
             Plack \
             Search::Elasticsearch
 
 # OTRS code
-RUN cd /opt \
-    && git clone -b rel-$(echo $OTRS_VERSION | sed --expression='s/\./_/g') \
-        --single-branch https://github.com/OTRS/otrs.git otrs
+RUN mkdir /opt/otrs \
+    && cd /opt \
+    && curl --silent -O https://ftp.otrs.org/pub/otrs/otrs-latest-${OTRS_VERSION%.*}.tar.gz \
+    && tar zxvpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
+    && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz
 
 WORKDIR /opt/otrs
 
@@ -86,7 +89,6 @@ COPY app-env.conf /etc/apache2/conf-available/app-env.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # post configuration
-SHELL ["/bin/bash", "-c"]
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf \
     && a2ensite otrs \
     && a2dismod mpm_event \
@@ -94,7 +96,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && a2enmod headers \
     && a2enmod perl \
     && a2enconf app-env \
-    && sed -i -e "s/6.0.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
+    && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
     && mv var/cron/aaa_base.dist var/cron/aaa_base \
     && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
     && useradd -d /opt/otrs -c 'OTRS user' otrs \
@@ -106,15 +108,15 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
                 /opt/otrs/var/tmp \
                 /opt/otrs/var/packages \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
-    && su otrs -c "~/bin/Cron.sh start" \
+    && bin/Cron.sh start root \
     && echo "source /etc/profile.d/bash_completion.sh" >> .bashrc \
     && chmod +x .bashrc
 
 # AddOns opm
 RUN cd /opt/otrs/var/packages \
-    && curl -O http://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION:0:1}/GeneralCatalog-${OTRS_VERSION}.opm \
-    && curl -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
-    && curl -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
-    && curl -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
+    && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION:0:1}/GeneralCatalog-${OTRS_VERSION}.opm \
+    && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
+    && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
+    && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
 
 CMD supervisord
