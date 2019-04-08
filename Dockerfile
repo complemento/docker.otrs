@@ -98,7 +98,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
     && mv var/cron/aaa_base.dist var/cron/aaa_base \
     && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
-    && useradd -d /opt/otrs -c 'OTRS user' otrs \
+    && useradd -d /opt/otrs -c 'OTRS user' -s /bin/bash otrs \
     && usermod -a -G www-data otrs \
     && usermod -a -G otrs www-data \
     && mkdir -p /var/log/supervisor \
