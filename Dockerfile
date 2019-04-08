@@ -77,7 +77,7 @@ RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
 RUN mkdir /opt/otrs \
     && cd /opt \
     && curl --silent -O https://ftp.otrs.org/pub/otrs/otrs-latest-${OTRS_VERSION%.*}.tar.gz \
-    && tar zxvpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
+    && tar zxpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
     && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz \
     && mkdir -p /opt/otrs/var/article \ 
                 /opt/otrs/var/spool \
