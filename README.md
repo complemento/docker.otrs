@@ -87,12 +87,12 @@ You can edit your docker-compose.yaml and adapt to your reallity
 
 | VARIABLE | Default | DESCRIPTION  |
 |--|--|--|
-| CUSTOMER_ID | ligero | Used for setting database name and other options |
-| OTRS_SYSTEM_ID | 10 | SystemID of OTRS |
-| OTRS_DEFAULT_LANGUAGE | en | Default Language: en, pt_BR etc
-| OTRS_FQDN | myotrs.ligero.online | Used for composing several system notifications. You can change it latter under the sysconfig, or set it here before running the stack |
-| INSTALL | 1 | Marked for installing the database and initial setup in a stack (docker-compose) installation |
-| DONT_INSTALL_LIGERO_ADDONS | 0 | Set to 1 if you do not want to install Ligero Repository. Our Repository give you access to several free and enterprise AddOns for improving your experience with OTRS |
+| APP_DatabaseType | mysql | Used for setting database type connection. Possible values: mysql, postgresql, odbc |
+| APP_DatabaseHost | mysql | Database server hostname or IP |
+| APP_Database | ligero | Database name
+| APP_DatabaseUser | root | Database user name |
+| APP_DatabasePw | 1 | Database password |
+| APP_NodeID | 1 | Set NodeID variable on OTRS, for cluster configuration. The purpose of this parameter is for scalability solutions integration like Docker Swarm or Kubernetes |
 
 
 ### Standalone container
