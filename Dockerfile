@@ -78,8 +78,13 @@ RUN mkdir /opt/otrs \
     && cd /opt \
     && curl --silent -O https://ftp.otrs.org/pub/otrs/otrs-latest-${OTRS_VERSION%.*}.tar.gz \
     && tar zxvpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
-    && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz
-
+    && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz \
+    && cd /opt/otrs/var/packages \
+    && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION:0:1}/GeneralCatalog-${OTRS_VERSION}.opm \
+    && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
+    && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
+    && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
+    
 WORKDIR /opt/otrs
 
 # include files
@@ -111,13 +116,6 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && bin/otrs.SetPermissions.pl --web-group=www-data \
     && bin/Cron.sh start otrs \
     && chmod +x /run.sh
-
-# AddOns opm
-RUN cd /opt/otrs/var/packages \
-    && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION:0:1}/GeneralCatalog-${OTRS_VERSION}.opm \
-    && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
-    && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
-    && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
 
 EXPOSE 80
 
