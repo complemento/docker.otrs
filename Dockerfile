@@ -8,7 +8,7 @@ ENV OTRS_VERSION=5.0.34 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 
 
-SHELL ["/bin/bash", "-l", "-c"]
+SHELL ["/bin/bash", "-c"]
 
 # Language
 RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
