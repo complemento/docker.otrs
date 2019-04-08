@@ -8,7 +8,7 @@ ENV OTRS_VERSION=5.0.34 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 
 
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-l", "-c"]
 
 # Language
 RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
@@ -86,6 +86,7 @@ WORKDIR /opt/otrs
 COPY Config.pm /opt/otrs/Kernel/Config.pm
 COPY app-env.conf /etc/apache2/conf-available/app-env.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY run.sh /run.sh
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf \
@@ -98,6 +99,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
     && mv var/cron/aaa_base.dist var/cron/aaa_base \
     && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
+    && sed -i 's/$HOME/bash -l -c $HOME/' var/cron/otrs_daemon \
     && useradd -d /opt/otrs -c 'OTRS user' -s /bin/bash otrs \
     && usermod -a -G www-data otrs \
     && usermod -a -G otrs www-data \
@@ -107,7 +109,8 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
                 /opt/otrs/var/tmp \
                 /opt/otrs/var/packages \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
-    && bin/Cron.sh start otrs 
+    && bin/Cron.sh start otrs \
+    && chmod +x /run.sh
 
 # AddOns opm
 RUN cd /opt/otrs/var/packages \
@@ -118,4 +121,4 @@ RUN cd /opt/otrs/var/packages \
 
 EXPOSE 80
 
-CMD supervisord
+CMD /run.sh
