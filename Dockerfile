@@ -80,6 +80,10 @@ RUN mkdir /opt/otrs \
     && tar zxvpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
     && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz \
     && cd /opt/otrs/var/packages \
+    && mkdir -p /opt/otrs/var/article \ 
+                /opt/otrs/var/spool \
+                /opt/otrs/var/tmp \
+                /opt/otrs/var/packages \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION:0:1}/GeneralCatalog-${OTRS_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
@@ -108,13 +112,9 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && useradd -d /opt/otrs -c 'OTRS user' -s /bin/bash otrs \
     && usermod -a -G www-data otrs \
     && usermod -a -G otrs www-data \
-    && mkdir -p /var/log/supervisor \
-                /opt/otrs/var/article \ 
-                /opt/otrs/var/spool \
-                /opt/otrs/var/tmp \
-                /opt/otrs/var/packages \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
     && bin/Cron.sh start otrs \
+    && mkdir -p /var/log/supervisor \
     && chmod +x /run.sh
 
 EXPOSE 80
