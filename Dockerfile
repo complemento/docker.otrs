@@ -79,12 +79,16 @@ RUN mkdir /opt/otrs \
     && curl --silent -O https://ftp.otrs.org/pub/otrs/otrs-latest-${OTRS_VERSION%.*}.tar.gz \
     && tar zxvpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
     && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz \
+    && mkdir -p /opt/otrs/var/article \ 
+                /opt/otrs/var/spool \
+                /opt/otrs/var/tmp \
+                /opt/otrs/var/packages \
     && cd /opt/otrs/var/packages \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION:0:1}/GeneralCatalog-${OTRS_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
-    
+
 WORKDIR /opt/otrs
 
 # include files
@@ -108,13 +112,9 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && sed -i 's|$HOME/bin/otrs.Daemon.pl|. /etc/profile.d/app-env.sh; $HOME/bin/otrs.Daemon.pl|' var/cron/otrs_daemon \
     && usermod -a -G www-data otrs \
     && usermod -a -G otrs www-data \
-    && mkdir -p /var/log/supervisor \
-                /opt/otrs/var/article \ 
-                /opt/otrs/var/spool \
-                /opt/otrs/var/tmp \
-                /opt/otrs/var/packages \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
     && bin/Cron.sh start otrs \
+    && mkdir -p /var/log/supervisor \
     && chmod +x /run.sh
 
 EXPOSE 80
