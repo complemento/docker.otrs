@@ -113,7 +113,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && useradd -d /opt/otrs -c 'OTRS user' -s /bin/bash otrs \
     && usermod -a -G www-data otrs \
     && usermod -a -G otrs www-data \
-    && echo "export PATH=\"$PATH:/opt/otrs/bin\"" > /etc/profile.d/app-path.sh \
+    && echo "PATH=\"$PATH:/opt/otrs/bin\"" > /etc/environment \
     && otrs.SetPermissions.pl --web-group=www-data \
     && Cron.sh start otrs \
     && mkdir -p /var/log/supervisor \
