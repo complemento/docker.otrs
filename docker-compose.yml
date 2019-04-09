@@ -8,7 +8,7 @@ services:
       APP_DatabaseType: mysql
       APP_DatabaseHost: mysql
       APP_Database: ligero
-      APP_DatabaseUser: root
+      APP_DatabaseUser: ligero
       APP_DatabasePw: ligero
       APP_NodeID: 1
       APP_ES_NODE: elastic
@@ -21,6 +21,9 @@ services:
       - ./data/mysql:/var/lib/mysql
     environment: 
       MYSQL_ROOT_PASSWORD: ligero
+      MYSQL_DATABASE: ligero
+      MYSQL_USER: ligero
+      MYSQL_PASSWORD: ligero
     command:
       - --max_allowed_packet=64M
       - --innodb_log_file_size=269331648
