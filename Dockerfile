@@ -96,6 +96,7 @@ WORKDIR /opt/otrs
 COPY Config.pm /opt/otrs/Kernel/Config.pm
 COPY app-env.conf /etc/apache2/conf-available/app-env.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY configure.sh /configure.sh
 COPY run.sh /run.sh
 
 # post configuration
