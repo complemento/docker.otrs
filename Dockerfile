@@ -118,7 +118,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && bin/otrs.SetPermissions.pl --web-group=www-data \
     && bin/Cron.sh start otrs \
     && mkdir -p /var/log/supervisor \
-    && chmod +x /run.sh
+    && chmod +x /*.sh
 
 EXPOSE 80
 
