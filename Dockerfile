@@ -96,8 +96,8 @@ WORKDIR /opt/otrs
 COPY Config.pm /opt/otrs/Kernel/Config.pm
 COPY app-env.conf /etc/apache2/conf-available/app-env.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY init.sh /init.sh
-COPY run.sh /run.sh
+COPY app-init.sh /app-init.sh
+COPY app-run.sh /app-run.sh
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf \
@@ -118,8 +118,9 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && bin/otrs.SetPermissions.pl --web-group=www-data \
     && bin/Cron.sh start otrs \
     && mkdir -p /var/log/supervisor \
-    && chmod +x /*.sh
+    && chmod +x /*.sh \
+    && mkdir /app-init.d/
 
 EXPOSE 80
 
-CMD /run.sh
+CMD /app-run.sh

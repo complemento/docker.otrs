@@ -9,10 +9,9 @@ do
     egrep -o " Message: (.+)" /tmp/console-maint-database-check.log
 
     # init configuration if empty
-    grep "database content is missing" /tmp/console-maint-database-check.log
-    if [ $? == 0 ]; then
-        /init.sh
-    fi
+    grep "database content is missing" /tmp/console-maint-database-check.log \
+    && /app-init.sh
+    
     sleep 1;
 done
 

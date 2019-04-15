@@ -37,3 +37,9 @@ done;
 # otrs root password
 su -c "otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento" otrs;
 echo "Password: complemento"
+
+# run custom init scripts
+for f in `ls /app-init.d/*.sh 2> /dev/null`; do
+    echo " * running $f"
+    bash "$f"
+done
