@@ -23,12 +23,6 @@ postgresql)
     #psql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" "CREATE DATABASE ${APP_Database}"
     ;;
 
-oracle)
-
-    #TODO
-    echo " * Loading ORACLE data"
-    ;;
-
 *) 
     echo " * APP_DatabaseType is not set";
     exit 1;
@@ -37,7 +31,7 @@ esac;
 # install otrs packages
 for PKG in `ls -1 /opt/otrs/var/packages/*.opm`; do
     echo " * Installing package $PKG"
-    su -c "otrs.Console.pl Admin::Package::Install $PKG" otrs;
+    su -c "otrs.Console.pl Admin::Package::Install --quiet $PKG" otrs;
 done;
 
 # otrs root password
