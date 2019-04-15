@@ -12,6 +12,7 @@ services:
       APP_DatabasePw: ligero
       APP_NodeID: 1
       APP_ES_NODE: elastic
+      TZ: America/Sao_Paulo
     ports:
       - 80:80
 
