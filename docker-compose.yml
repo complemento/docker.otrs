@@ -3,7 +3,7 @@ version: '3'
 services:
   otrs6:
     build: .
-    image: ligero-otrs:6
+    image: otrs:6
     environment:
       APP_DatabaseType: mysql
       APP_DatabaseHost: mysql
