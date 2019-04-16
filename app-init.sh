@@ -28,6 +28,10 @@ postgresql)
     exit 1;
 esac;
 
+# allow not verified packages
+su -c "otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 0 --no-deploy" otrs;
+su -c "otrs.Console.pl Maint::Config::Rebuild" otrs;
+
 # install otrs packages
 for PKG in `ls -1 /opt/otrs/var/packages/*.opm`; do
     echo "$0 - Installing package $PKG"
