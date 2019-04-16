@@ -29,7 +29,7 @@ postgresql)
 esac;
 
 # allow not verified packages
-su -c "otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 0 --no-deploy" otrs;
+su -c "otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy" otrs;
 su -c "otrs.Console.pl Maint::Config::Rebuild" otrs;
 
 # install otrs packages
