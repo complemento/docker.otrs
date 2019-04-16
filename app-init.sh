@@ -30,24 +30,25 @@ esac;
 
 # allow not verified packages
 su -c "otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy" otrs;
+
+# enable secure mode
+su -c "otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy" otrs;
+
+# apply config
 su -c "otrs.Console.pl Maint::Config::Rebuild" otrs;
 
-# install otrs packages
+# install packages
 for PKG in `ls -1 /opt/otrs/var/packages/*.opm`; do
     echo "$0 - Installing package $PKG"
     su -c "otrs.Console.pl Admin::Package::Install --quiet $PKG" otrs;
 done;
-
-# otrs root password
-su -c "otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento" otrs;
-echo "Password: complemento"
-
-su -c "otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy" otrs;
-su -c "otrs.Console.pl Maint::Config::Rebuild" otrs;
-
 
 # run custom init scripts
 for f in `ls /app-init.d/*.sh 2> /dev/null`; do
     echo "$0 - running $f"
     bash "$f"
 done
+
+# root password
+su -c "otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento" otrs;
+echo "Password: complemento"
