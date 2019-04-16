@@ -31,7 +31,7 @@ esac;
 # install packages
 for PKG in `ls -1 /opt/otrs/var/packages/*.opm`; do
     echo "$0 - Installing package $PKG"
-    su -c "otrs.Console.pl Admin::Package::Install --quiet $PKG" otrs;
+    otrs.Console.pl Admin::Package::Install --quiet $PKG
 done;
 
 # run custom init scripts
@@ -41,11 +41,11 @@ for f in `ls /app-init.d/*.sh 2> /dev/null`; do
 done
 
 # enable secure mode
-su -c "otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy" otrs;
+otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy
 
 # apply config
-su -c "otrs.Console.pl Maint::Config::Rebuild" otrs;
+otrs.Console.pl Maint::Config::Rebuild
 
 # root password
-su -c "otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento" otrs;
+otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento
 echo "Password: complemento"

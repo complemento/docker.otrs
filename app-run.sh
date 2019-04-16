@@ -10,7 +10,7 @@ do
 
     # init configuration if empty
     grep "database content is missing" /tmp/console-maint-database-check.log \
-    && /app-init.sh
+    && su -c "/app-init.sh" otrs;
     
     sleep 1;
 done
