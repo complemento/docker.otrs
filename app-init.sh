@@ -38,6 +38,10 @@ done;
 su -c "otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento" otrs;
 echo "Password: complemento"
 
+su -c "otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy" otrs;
+su -c "otrs.Console.pl Maint::Config::Rebuild" otrs;
+
+
 # run custom init scripts
 for f in `ls /app-init.d/*.sh 2> /dev/null`; do
     echo " * running $f"
