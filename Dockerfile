@@ -100,7 +100,7 @@ COPY app-env.conf /etc/apache2/conf-available/app-env.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
-COPY init-screen /opt/otrs/opt/otrs/var/httpd/
+COPY init-screen/ /opt/otrs/var/httpd/init-screen
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf \
