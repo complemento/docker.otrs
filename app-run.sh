@@ -19,9 +19,6 @@ do
     sleep 1;
 done
 
-# cache
-su -c "bin/otrs.Console.pl Maint::Loader::CacheGenerate" otrs;
-
 # stop init-screen
 kill -9 $INITSCREEN_PID
 
