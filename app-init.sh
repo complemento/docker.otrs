@@ -31,7 +31,7 @@ esac;
 # install packages
 for PKG in `ls -1 /opt/otrs/var/packages/*.opm`; do
     echo "$0 - Installing package $PKG"
-    otrs.Console.pl Admin::Package::Install --quiet $PKG
+    otrs.Console.pl Admin::Package::Install --force --quiet $PKG
 done;
 
 # run custom init scripts
