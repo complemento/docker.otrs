@@ -34,8 +34,8 @@ otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedP
 otrs.Console.pl Maint::Config::Rebuild
 for PKG in `ls -1 /opt/otrs/var/packages/*.opm`; do
     echo "$0 - Installing package $PKG"
-    otrs.Console.pl Admin::Package::Install --force --quiet $PKG
-    rm -rf $PKG
+    otrs.Console.pl Admin::Package::Install --force --quiet $PKG \
+    && rm -rf $PKG
 done;
 
 # run custom init scripts
