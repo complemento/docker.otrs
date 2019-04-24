@@ -1,5 +1,8 @@
 #!/bin/bash
 
+INITSCREEN_DIR=/opt/otrs/var/httpd/init-screen/
+PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
+
 
 # Database installation
 case $APP_DatabaseType in
@@ -28,21 +31,36 @@ postgresql)
     exit 1;
 esac;
 
+echo "0.3" > $PROGRESSBAR_FILE
+
 # install packages
 otrs.Console.pl Maint::Config::Rebuild
 otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy
 otrs.Console.pl Maint::Config::Rebuild
-for PKG in `ls -1 /opt/otrs/var/packages/*.opm`; do
+
+PROGRESS_STEP=0
+PACKAGE_LIST=`ls -1 /opt/otrs/var/packages/*.opm`
+for PKG in $PACKAGE_LIST; do
     echo "$0 - Installing package $PKG"
     otrs.Console.pl Admin::Package::Install --force --quiet $PKG \
     && rm -rf $PKG
+    PROGRESS_STEP=$(($PROGRESS_STEP+1))
+    echo $((0.3 + $PROGRESS_STEP*0.03)) > $PROGRESSBAR_FILE
 done;
 
+echo "0.6" > $PROGRESSBAR_FILE
+
 # run custom init scripts
-for f in `ls /app-init.d/*.sh 2> /dev/null`; do
+PROGRESS_STEP=0
+SCRIPT_LIST=`ls -1 /app-init.d/*.sh 2> /dev/null`
+for f in $SCRIPT_LIST; do
     echo "$0 - running $f"
     bash "$f"
+    PROGRESS_STEP=$(($PROGRESS_STEP+1))
+    echo $((0.6 + $PROGRESS_STEP*0.03)) > $PROGRESSBAR_FILE
 done
+
+echo "0.9" > $PROGRESSBAR_FILE
 
 # enable secure mode
 otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy
@@ -53,3 +71,5 @@ otrs.Console.pl Maint::Config::Rebuild
 # root password
 otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento
 echo "Password: complemento"
+
+echo "0.95" > $PROGRESSBAR_FILE

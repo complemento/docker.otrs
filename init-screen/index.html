@@ -30,8 +30,8 @@
     <body>
         <div class="center">
             <img src="logo.png" />
-            <img src="loading.gif" style="height: 79px" />
-        </div>
+            <progress id="progressBar"></progress>
+            </div>
     </body>
     <script>
         function isSiteOnline(url,callback) {
@@ -55,14 +55,27 @@
             img.src = url;
         }
 
-        timerCheck = setInterval(function(){
+        var xmlhttp = new XMLHttpRequest();
+        var progress = 0;
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("progressBar").value = progress = this.responseText;
+            } 
+        };
+
+        progressCheck = setInterval(function(){
+            xmlhttp.open("GET", "progress.txt", true);
+            xmlhttp.send();
+        },3000)
+
+        siteCheck = setInterval(function(){
             isSiteOnline("/otrs-web/skins/Agent/default/img/icons/product.ico?n="+Math.random(),function(found){
                 if(found) {
-                    clearTimeout(timerCheck);
+                    clearTimeout(siteCheck);
                     window.location.href = '/otrs/index.pl';
                 }
             }
-        )},1000)
-
+        )},5000)
+        
     </script>
 </html>

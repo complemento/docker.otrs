@@ -1,7 +1,13 @@
 #!/bin/bash
 
+INITSCREEN_DIR=/opt/otrs/var/httpd/init-screen/
+PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
+
+echo "0.05" > $PROGRESSBAR_FILE
+
+
 # init-screen
-perl /opt/otrs/var/httpd/init-screen/httpserver.pl > /dev/null 2>&1 &
+perl $INITSCREEN_DIR/httpserver.pl > /dev/null 2>&1 &
 INITSCREEN_PID=$!
 
 # set APP ENV vars
@@ -18,6 +24,8 @@ do
     
     sleep 1;
 done
+
+echo "1" > $PROGRESSBAR_FILE
 
 # stop init-screen
 kill -9 $INITSCREEN_PID
