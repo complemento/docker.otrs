@@ -59,6 +59,7 @@ RUN apt-get update \
         mysql-client \
         perl \
         postgresql-client \
+        sendmail \
         sudo \
         supervisor \
         unzip \
