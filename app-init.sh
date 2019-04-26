@@ -32,7 +32,7 @@ esac;
 otrs.Console.pl Maint::Config::Rebuild
 otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy
 otrs.Console.pl Maint::Config::Rebuild
-for PKG in `ls -1 /opt/otrs/var/packages/*.opm`; do
+for PKG in `ls -1 /app-packages/*.opm`; do
     echo "$0 - Installing package $PKG"
     otrs.Console.pl Admin::Package::Install --force --quiet $PKG \
     && rm -rf $PKG
