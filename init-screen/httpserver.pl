@@ -15,7 +15,7 @@ $server->mount( '/otrs-web/skins/Agent/default/img/icons/product.ico' => {
 });
 
 $server->mount( '/' => {
-    path => '/opt/otrs/var/httpd/init-screen',
+    path => '/var/www/html',
 });
 
 $server->mount( '/otrs/' => {

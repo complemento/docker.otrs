@@ -59,6 +59,7 @@ RUN apt-get update \
         mysql-client \
         perl \
         postgresql-client \
+        sendmail \
         sudo \
         supervisor \
         unzip \
@@ -85,8 +86,8 @@ RUN mkdir /opt/otrs \
     && mkdir -p /opt/otrs/var/article \ 
                 /opt/otrs/var/spool \
                 /opt/otrs/var/tmp \
-                /opt/otrs/var/packages \
-    && cd /opt/otrs/var/packages \
+                /app-packages \
+    && cd /app-packages \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
@@ -99,7 +100,7 @@ COPY app-env.conf /etc/apache2/conf-available/app-env.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
-COPY init-screen/ /opt/otrs/var/httpd/init-screen
+COPY init-screen/* /var/www/html/
 COPY .my.cnf /root/
 COPY .my.cnf /opt/otrs/
 
@@ -127,9 +128,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && chmod +x /*.sh \
     && mkdir /app-init.d/ \
     && mkdir /app-backups/ \
-    && chown otrs:www-data /app-backups \
-    && echo '<meta http-equiv="refresh" content="0; url=/otrs/index.pl">' > /var/www/html/index.html
-
+    && chown otrs:www-data /app-backups 
 EXPOSE 80
 
 CMD /app-run.sh

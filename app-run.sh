@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INITSCREEN_DIR=/opt/otrs/var/httpd/init-screen/
+INITSCREEN_DIR=/var/www/html
 PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
 
 echo "0.05" > $PROGRESSBAR_FILE
