@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # init-screen
-perl /opt/otrs/var/httpd/init-screen/httpserver.pl > /dev/null 2>&1 &
+perl /var/www/html/httpserver.pl > /dev/null 2>&1 &
 INITSCREEN_PID=$!
 
 # set APP ENV vars
