@@ -1,12 +1,8 @@
 #!/bin/bash
 
-INITSCREEN_DIR=/opt/otrs/var/httpd/init-screen/
+INITSCREEN_DIR=/var/www/html
 PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
 
-PACKAGE_LIST=`ls /app-packages/*.opm`
-PACKAGE_COUNT=`ls -1 /app-packages/*.opm | wc -l`
-SCRIPT_LIST=`ls /app-init.d/*.sh 2> /dev/null`
-SCRIPT_COUNT=`ls -1 /app-init.d/*.sh 2> /dev/null | wc -l`
 
 # Database installation
 case $APP_DatabaseType in
@@ -42,7 +38,9 @@ otrs.Console.pl Maint::Config::Rebuild
 otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy
 otrs.Console.pl Maint::Config::Rebuild
 
-let PROGRESS_STEP=50/$PACKAGE_COUNT
+PACKAGE_LIST=`ls /app-packages/*.opm`
+PACKAGE_COUNT=`ls -1 /app-packages/*.opm | wc -l`
+let PROGRESS_STEP=55/$PACKAGE_COUNT
 for PKG in $PACKAGE_LIST; do
     echo "$0 - Installing package $PKG"
     otrs.Console.pl Admin::Package::Install --force --quiet $PKG \
@@ -52,9 +50,11 @@ for PKG in $PACKAGE_LIST; do
     echo $PROGRESS > $PROGRESSBAR_FILE
 done;
 
-echo "80" > $PROGRESSBAR_FILE
+echo "85" > $PROGRESSBAR_FILE
 
 # run custom init scripts
+SCRIPT_LIST=`ls /app-init.d/*.sh 2> /dev/null`
+SCRIPT_COUNT=`ls -1 /app-init.d/*.sh 2> /dev/null | wc -l`
 let PROGRESS_STEP=10/$SCRIPT_COUNT
 for f in $SCRIPT_LIST; do
     echo "$0 - running $f"
@@ -64,7 +64,7 @@ for f in $SCRIPT_LIST; do
     echo $PROGRESS > $PROGRESSBAR_FILE
 done
 
-echo "90" > $PROGRESSBAR_FILE
+echo "95" > $PROGRESSBAR_FILE
 
 # enable secure mode
 otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy
@@ -76,4 +76,4 @@ otrs.Console.pl Maint::Config::Rebuild
 otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento
 echo "Password: complemento"
 
-echo "95" > $PROGRESSBAR_FILE
+echo "97" > $PROGRESSBAR_FILE
