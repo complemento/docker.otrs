@@ -3,7 +3,7 @@
 INITSCREEN_DIR=/var/www/html
 PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
 
-echo "0.05" > $PROGRESSBAR_FILE
+echo "5" > $PROGRESSBAR_FILE
 
 
 # init-screen
@@ -25,7 +25,7 @@ do
     sleep 1;
 done
 
-echo "1" > $PROGRESSBAR_FILE
+echo "100" > $PROGRESSBAR_FILE
 
 # stop init-screen
 kill -9 $INITSCREEN_PID

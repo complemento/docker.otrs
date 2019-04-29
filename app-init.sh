@@ -3,6 +3,10 @@
 INITSCREEN_DIR=/opt/otrs/var/httpd/init-screen/
 PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
 
+PACKAGE_LIST=`ls /app-packages/*.opm`
+PACKAGE_COUNT=`ls -1 /app-packages/*.opm | wc -l`
+SCRIPT_LIST=`ls /app-init.d/*.sh 2> /dev/null`
+SCRIPT_COUNT=`ls -1 /app-init.d/*.sh 2> /dev/null | wc -l`
 
 # Database installation
 case $APP_DatabaseType in
@@ -31,36 +35,36 @@ postgresql)
     exit 1;
 esac;
 
-echo "0.3" > $PROGRESSBAR_FILE
+echo "30" > $PROGRESSBAR_FILE
 
 # install packages
 otrs.Console.pl Maint::Config::Rebuild
 otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy
 otrs.Console.pl Maint::Config::Rebuild
 
-PROGRESS_STEP=0
-PACKAGE_LIST=`ls -1 /opt/otrs/var/packages/*.opm`
+let PROGRESS_STEP=50/$PACKAGE_COUNT
 for PKG in $PACKAGE_LIST; do
     echo "$0 - Installing package $PKG"
     otrs.Console.pl Admin::Package::Install --force --quiet $PKG \
     && rm -rf $PKG
-    PROGRESS_STEP=$(($PROGRESS_STEP+1))
-    echo $((0.3 + $PROGRESS_STEP*0.03)) > $PROGRESSBAR_FILE
+    let PACKAGE_COUNT_INSTALLED+=1
+    let PROGRESS=$PROGRESS_STEP*$PACKAGE_COUNT_INSTALLED+30
+    echo $PROGRESS > $PROGRESSBAR_FILE
 done;
 
-echo "0.6" > $PROGRESSBAR_FILE
+echo "80" > $PROGRESSBAR_FILE
 
 # run custom init scripts
-PROGRESS_STEP=0
-SCRIPT_LIST=`ls -1 /app-init.d/*.sh 2> /dev/null`
+let PROGRESS_STEP=10/$SCRIPT_COUNT
 for f in $SCRIPT_LIST; do
     echo "$0 - running $f"
     bash "$f"
-    PROGRESS_STEP=$(($PROGRESS_STEP+1))
-    echo $((0.6 + $PROGRESS_STEP*0.03)) > $PROGRESSBAR_FILE
+    let SCRIPT_COUNT_RUN+=1
+    let PROGRESS=$PROGRESS_STEP*$SCRIPT_COUNT_RUN+80
+    echo $PROGRESS > $PROGRESSBAR_FILE
 done
 
-echo "0.9" > $PROGRESSBAR_FILE
+echo "90" > $PROGRESSBAR_FILE
 
 # enable secure mode
 otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy
@@ -72,4 +76,4 @@ otrs.Console.pl Maint::Config::Rebuild
 otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento
 echo "Password: complemento"
 
-echo "0.95" > $PROGRESSBAR_FILE
+echo "95" > $PROGRESSBAR_FILE
