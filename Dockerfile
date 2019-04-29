@@ -128,9 +128,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && chmod +x /*.sh \
     && mkdir /app-init.d/ \
     && mkdir /app-backups/ \
-    && chown otrs:www-data /app-backups \
-    && echo '<meta http-equiv="refresh" content="0; url=/otrs/index.pl">' > /var/www/html/index.html
-
+    && chown otrs:www-data /app-backups 
 EXPOSE 80
 
 CMD /app-run.sh
