@@ -128,7 +128,8 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && chmod +x /*.sh \
     && mkdir /app-init.d/ \
     && mkdir /app-backups/ \
-    && chown otrs:www-data /app-backups 
+    && chown otrs:www-data /app-backups /var/www/html/*
+
 EXPOSE 80
 
 CMD /app-run.sh
