@@ -49,8 +49,7 @@ otrs.Console.pl Maint::Config::Rebuild
 
 for PKG in $PACKAGE_LIST; do
     echo "$0 - Installing package $PKG"
-    otrs.Console.pl Admin::Package::Install --force --quiet $PKG \
-    && rm -rf $PKG
+    otrs.Console.pl Admin::Package::Install --force --quiet $PKG 
     let ITEM_COUNT+=1
     let PROGRESS=$PROGRESS_STEP*$ITEM_COUNT+30
     echo $PROGRESS > $PROGRESSBAR_FILE
