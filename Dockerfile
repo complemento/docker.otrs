@@ -62,6 +62,7 @@ RUN apt-get update \
         sendmail \
         sudo \
         supervisor \
+        tzdata \
         unzip \
         vim \
         zip \
