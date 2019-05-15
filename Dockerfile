@@ -134,7 +134,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && ln -sf /dev/stdout /var/log/apache2/access.log \
     && ln -sf /dev/stdout /var/log/apache2/error.log \
     && curl --silent https://github.com/OTRS/otrs/commit/f2f1ebf9fb196dafb1a3252f93bed6c1c784940b.diff > /tmp/no-sslglue.diff \
-    && patch -p1 /tmp/no-sslglue.diff \
+    && patch -p1 < /tmp/no-sslglue.diff \
     && rm /tmp/no-sslglue.diff
 
 
