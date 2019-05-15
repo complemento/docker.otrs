@@ -2,6 +2,7 @@
 
 INITSCREEN_DIR=/var/www/html
 PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
+START_BACKEND=${START_BACKEND:-1}
 
 echo "5" > $PROGRESSBAR_FILE
 
@@ -29,6 +30,13 @@ echo "100" > $PROGRESSBAR_FILE
 
 # stop init-screen
 kill -9 $INITSCREEN_PID
+
+if [ "$START_BACKEND" == "1" ]; then
+
+    /opt/otrs/bin/Cron.sh start otrs;
+    su -c "/opt/otrs/bin/otrs.Daemon.pl start" otrs;
+
+fi;
 
 # run services
 exec supervisord
