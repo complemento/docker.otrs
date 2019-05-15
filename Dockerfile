@@ -121,6 +121,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && useradd -d /opt/otrs -c 'OTRS user' -s /bin/bash otrs \
     && usermod -a -G www-data otrs \
     && usermod -a -G otrs www-data \
+    && usermod -a -G tty www-data \
     && echo "PATH=\"$PATH:/opt/otrs/bin\"" > /etc/environment \
     && echo ". /etc/environment" > /opt/otrs/.profile \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
@@ -129,7 +130,9 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && chmod +x /*.sh \
     && mkdir /app-init.d/ \
     && mkdir /app-backups/ \
-    && chown otrs:www-data /app-backups /var/www/html/*
+    && chown otrs:www-data /app-backups /var/www/html/* \
+    && ln -sf /dev/stdout /var/log/apache2/access.log \
+    && ln -sf /dev/stdout /var/log/apache2/error.log
 
 EXPOSE 80
 
