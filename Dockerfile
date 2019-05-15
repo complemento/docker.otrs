@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* 
 
 # Packages
 RUN apt-get update \
-    && apt-mark hold libnet-smtp-ssl-perl \
     && apt-get install -y \
         apache2 \
         bash-completion \
@@ -133,7 +132,11 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && mkdir /app-backups/ \
     && chown otrs:www-data /app-backups /var/www/html/* \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
-    && ln -sf /dev/stdout /var/log/apache2/error.log
+    && ln -sf /dev/stdout /var/log/apache2/error.log \
+    && curl https://github.com/OTRS/otrs/commit/f2f1ebf9fb196dafb1a3252f93bed6c1c784940b.diff -O /tmp/no-sslglue.diff \
+    && patch -p1 /tmp/no-sslglue.diff \
+    && rm /tmp/no-sslglue.diff
+
 
 EXPOSE 80
 
