@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* 
 
 # Packages
 RUN apt-get update \
+    && apt-mark hold libnet-smtp-ssl-perl \
     && apt-get install -y \
         apache2 \
         bash-completion \
