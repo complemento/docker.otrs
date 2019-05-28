@@ -30,20 +30,22 @@ sub Load {
     # ---------------------------------------------------- #
 
     # The database host
-    $Self->{DatabaseHost} = $ENV{APP_DatabaseHost};
+    $Self->{DatabaseHost} = defined($ENV{APP_DatabaseHost}) ? $ENV{APP_DatabaseHost} : 'database';
 
     # The database name
-    $Self->{Database} = $ENV{APP_Database};
+    $Self->{Database} = defined($ENV{APP_Database}) ? $ENV{APP_Database} : 'otrs';
 
     # The database user
-    $Self->{DatabaseUser} = $ENV{APP_DatabaseUser};
+    $Self->{DatabaseUser} = defined($ENV{APP_DatabaseUser}) ? $ENV{APP_DatabaseUser} : 'otrs';
 
     # The password of database user. You also can use bin/otrs.Console.pl Maint::Database::PasswordCrypt
     # for crypted passwords
-    $Self->{DatabasePw} = $ENV{APP_DatabasePw};
+    $Self->{DatabasePw} = defined($ENV{APP_DatabasePw}) ? $ENV{APP_DatabasePw} : '';
+
+    my $dbType = defined($ENV{APP_DatabaseType}) ? $ENV{APP_DatabaseType} : 'mysql';
 
     # The database DSN for MySQL ==> more: "perldoc DBD::mysql"
-    if($ENV{APP_DatabaseType} eq 'mysql') {
+    if($dbType eq 'mysql') {
         $Self->{'DatabaseDSN'} = "DBI:mysql:database=$Self->{Database};host=$Self->{DatabaseHost}";
     }
     
@@ -51,12 +53,12 @@ sub Load {
     # if you want to use a local socket connection
     #$Self->{DatabaseDSN} = "DBI:Pg:dbname=$Self->{Database};";
     # if you want to use a TCP/IP connection
-    if($ENV{APP_DatabaseType} eq 'postgresql') {
+    if($dbType eq 'postgresql') {
         $Self->{DatabaseDSN} = "DBI:Pg:dbname=$Self->{Database};host=$Self->{DatabaseHost};";
     }
     # The database DSN for Microsoft SQL Server - only supported if OTRS is
     # installed on Windows as well
-    if($ENV{APP_DatabaseType} eq 'odbc') {
+    if($dbType eq 'odbc') {
         $Self->{DatabaseDSN} = "DBI:ODBC:driver={SQL Server};Database=$Self->{Database};Server=$Self->{DatabaseHost},1433";
     }
     # The database DSN for Oracle ==> more: "perldoc DBD::oracle"
@@ -86,10 +88,10 @@ sub Load {
     # ---------------------------------------------------- #
     # $DIBI$
 
-    #$Self->{'FQDN'} = $ENV{APP_FQDN};
+    $Self->{'FQDN'} = defined($ENV{APP_FQDN}) ? $ENV{APP_FQDN} : `hostname -f`;
 
     # Node ID from ENV
-    $Self->{'NodeID'} = $ENV{APP_NodeID};
+    $Self->{'NodeID'} = defined($ENV{APP_NodeID}) ? $ENV{APP_NodeID} : 1;
 
     # ---------------------------------------------------- #
     # ---------------------------------------------------- #

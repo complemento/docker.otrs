@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <title>OTRS</title>
+        <style type="text/css">
+            * {
+                font-family: "Open Sans",Arial,sans-serif;
+                line-height: 1.7em;
+                text-align: center;
+            }
+
+            body{
+                background-color: #ffffff;
+            }
+            h1,h2,h3 {
+                color: #355683;
+            }
+            img {
+                margin: 10% auto;
+                display: block;
+            }
+
+            .center {
+                margin: 10% auto;
+                width: 50%;
+                padding: 10px;
+            }
+        </style>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    </head>
+    <body>
+        <div class="center">
+            <img src="logo.png" />
+            <progress id="progressBar" max="100"></progress>
+            </div>
+    </body>
+    <script>
+        function isSiteOnline(url,callback) {
+            // try to load favicon
+            var timer = setTimeout(function(){
+                // timeout after 5 seconds
+                callback(false);
+            },5000)
+
+            var img = document.createElement("img");
+            img.onload = function() {
+                clearTimeout(timer);
+                callback(true);
+            }
+
+            img.onerror = function() {
+                clearTimeout(timer);
+                callback(false);
+            }
+
+            img.src = url;
+        }
+
+        var xmlhttp = new XMLHttpRequest();
+        var progress = 0;
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("progressBar").value = progress = this.responseText;
+            } 
+        };
+
+        progressCheck = setInterval(function(){
+            xmlhttp.open("GET", "progress.txt", true);
+            xmlhttp.send();
+        },3000)
+
+        siteCheck = setInterval(function(){
+            isSiteOnline("/otrs-web/skins/Agent/default/img/icons/product.ico?n="+Math.random(),function(found){
+                if(found) {
+                    clearTimeout(siteCheck);
+                    window.location.href = '/otrs/index.pl';
+                }
+            }
+        )},5000)
+        
+    </script>
+</html>

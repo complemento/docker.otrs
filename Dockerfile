@@ -59,8 +59,10 @@ RUN apt-get update \
         mysql-client \
         perl \
         postgresql-client \
+        sendmail \
         sudo \
         supervisor \
+        tzdata \
         unzip \
         vim \
         zip \
@@ -71,8 +73,10 @@ RUN apt-get update \
 RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
     && cpanm --sudo --quiet --notest \ 
             Cache::Memcached::Fast \
+            HTTP::Server::Brick \
             Plack \
             Search::Elasticsearch
+
 
 # OTRS code
 RUN mkdir /opt/otrs \
@@ -83,21 +87,23 @@ RUN mkdir /opt/otrs \
     && mkdir -p /opt/otrs/var/article \ 
                 /opt/otrs/var/spool \
                 /opt/otrs/var/tmp \
-                /opt/otrs/var/packages \
-    && cd /opt/otrs/var/packages \
-    && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION:0:1}/GeneralCatalog-${OTRS_VERSION}.opm \
+                /app-packages \
+    && cd /app-packages \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
     && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
-    
+
 WORKDIR /opt/otrs
 
 # include files
 COPY Config.pm /opt/otrs/Kernel/Config.pm
 COPY app-env.conf /etc/apache2/conf-available/app-env.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY configure.sh /configure.sh
-COPY run.sh /run.sh
+COPY app-init.sh /app-init.sh
+COPY app-run.sh /app-run.sh
+COPY init-screen/* /var/www/html/
+COPY .my.cnf /root/
+COPY .my.cnf /opt/otrs/
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf \
@@ -110,16 +116,28 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-availa
     && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
     && mv var/cron/aaa_base.dist var/cron/aaa_base \
     && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
+    && echo "0 2 * * * $HOME/scripts/backup.pl -d /app-backups -r 15" > var/cron/app-backups.dist \
     && sed -i 's|$HOME/bin/otrs.Daemon.pl|. /etc/profile.d/app-env.sh; $HOME/bin/otrs.Daemon.pl|' var/cron/otrs_daemon \
     && useradd -d /opt/otrs -c 'OTRS user' -s /bin/bash otrs \
     && usermod -a -G www-data otrs \
     && usermod -a -G otrs www-data \
+    && usermod -a -G tty www-data \
     && echo "PATH=\"$PATH:/opt/otrs/bin\"" > /etc/environment \
+    && echo ". /etc/environment" > /opt/otrs/.profile \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
     && bin/Cron.sh start otrs \
     && mkdir -p /var/log/supervisor \
-    && chmod +x /*.sh
+    && chmod +x /*.sh \
+    && mkdir /app-init.d/ \
+    && mkdir /app-backups/ \
+    && chown otrs:www-data /app-backups /var/www/html/* \
+    && ln -sf /dev/stdout /var/log/apache2/access.log \
+    && ln -sf /dev/stdout /var/log/apache2/error.log \
+    && curl --silent https://github.com/OTRS/otrs/commit/f2f1ebf9fb196dafb1a3252f93bed6c1c784940b.diff > /tmp/no-sslglue.diff \
+    && patch -p1 < /tmp/no-sslglue.diff \
+    && rm /tmp/no-sslglue.diff
+
 
 EXPOSE 80
 
-CMD /run.sh
+CMD /app-run.sh
