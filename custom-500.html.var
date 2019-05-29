@@ -47,7 +47,7 @@
 				<div id="message" style="display:none">
 					<p>Endereço: <span id="url"></span></p>
 					<p>Horário: <span id="date"></span></p>
-					<div id="error"><!--#echo var="REDIRECT_ERROR_NOTES" --></div>
+					<p><pre><!--#echo var="REDIRECT_ERROR_NOTES" --></pre></p>
 				</div>
 				<script>
 					messageDiv = document.getElementById('message');
