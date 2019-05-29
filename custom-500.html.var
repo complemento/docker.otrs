@@ -1,3 +1,5 @@
+Content-type: text/html; charset=UTF-8
+Body:------------
 <html>
 	<head>
 		<title>Erro 500</title>
@@ -5,15 +7,25 @@
 			* {
 				font-family: Verdana, Geneva, Tahoma, sans-serif;
 			}
+			main {
+				text-align: center;
+			}
 			#message { 
 				font-size: 12px;
-				max-width: 80%;
-				margin: 0 auto;
 				text-align: left;
 			}
-			main {
+			#message, legend {
+				border: 0px;
+				background-color: #FFF;
+				border-radius: 10px;
+				padding: 5px 15px;
+			}
+			.section-error {
+				background-color: #f6f6fa;
+				padding: 20px 10px 1px;
 				margin: 10% auto;
-				text-align: center;
+				max-width: 800px;
+				border-radius: 10px;
 			}
 			.button {
 				display: inline-block;
@@ -24,6 +36,12 @@
 				color: white;
 				text-decoration: none;
 			}
+			code {
+				display: block;
+				border-radius: 3px;
+				font-family: courier, monospace;
+				padding: 10px;
+			}
 		</style>
 
 		<script>
@@ -32,7 +50,7 @@
 			var dateTxt = date.toLocaleString() + ' (' + timezone + ')';
 			var url = window.location.href;
 			var subject = 'Erro ao acessar '+ window.location.href;
-			var body = 'Olá,\n\nHouve um problema ao acessar o endereço descrito abaixo:\n\n';
+			var body = 'Olá,\n\nHouve um problema ao acessar o endereço descrito abaixo.\n\n';
 			function report(){
 				window.location.href = "mailto:?subject=" + subject +"&body=" + encodeURIComponent(body+document.getElementById('message').innerText);
 			}
@@ -47,11 +65,17 @@
 			</svg>
 			<p class="section-error__message">
 				Houve um problema nesta requisição.
-				<div id="message" style="display:none">
+				<fieldset id="message">
+				<legend>Informações:</legend>
 					<p>Endereço: <span id="url"></span></p>
 					<p>Horário: <span id="date"></span></p>
-					<p><pre><!--#echo var="REDIRECT_ERROR_NOTES" --></pre></p>
-				</div>
+					<!--#if expr="-n v('DEBUG_MODE')" -->
+						<p>Mensagem: <code><!--#echo encoding="none" var="REDIRECT_ERROR_NOTES" --></code></p>
+						<p>Navegador: <span id="browser"><!--#echo var="HTTP_USER_AGENT" --></span></p>
+						<p>Referer: <span id="referer"><!--#echo var="HTTP_REFERER" --></span></p>
+						<p>Endereço remoto: <span id="remote"><!--#echo var="REDIRECT_REMOTE_ADDR" --></span></p>
+					<!--#endif -->
+				</fieldset>
 				<script>
 					messageDiv = document.getElementById('message');
 					urlSpan = document.getElementById('url');
@@ -62,7 +86,6 @@
 						dateSpan.innerText = dateTxt;
 					}
 				</script>
-			</p>
 
 			<p class="section-error__actions">
 				<a class="button" href="javascript:report()" title="Enviar mensagem">Reportar problema</a>
@@ -72,3 +95,4 @@
 	</main>
 	</body>
 </html>
+------------

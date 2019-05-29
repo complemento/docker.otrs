@@ -109,7 +109,7 @@ COPY custom-error-page.conf /etc/apache2/conf-available/
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf \
-    && a2enconf otrs custom-error-page \
+    && a2enconf otrs include custom-error-page \
     && a2dismod mpm_event \
     && a2enmod mpm_prefork \
     && a2enmod headers \
