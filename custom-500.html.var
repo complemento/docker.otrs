@@ -69,7 +69,7 @@ Body:------------
 				<legend>Informações:</legend>
 					<p>Endereço: <span id="url"></span></p>
 					<p>Horário: <span id="date"></span></p>
-					<!--#if expr="-n v('DEBUG_MODE')" -->
+					<!--#if expr="v('DEBUG_MODE') = 1" -->
 						<p>Mensagem: <code><!--#echo encoding="none" var="REDIRECT_ERROR_NOTES" --></code></p>
 						<p>Navegador: <span id="browser"><!--#echo var="HTTP_USER_AGENT" --></span></p>
 						<p>Referer: <span id="referer"><!--#echo var="HTTP_REFERER" --></span></p>
