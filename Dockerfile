@@ -104,10 +104,12 @@ COPY app-run.sh /app-run.sh
 COPY init-screen/* /var/www/html/
 COPY .my.cnf /root/
 COPY .my.cnf /opt/otrs/
+COPY custom-500.html.var /usr/share/apache2/error/
+COPY custom-error-page.conf /etc/apache2/conf-available/
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf \
-    && a2enconf otrs \
+    && a2enconf otrs custom-error-page \
     && a2dismod mpm_event \
     && a2enmod mpm_prefork \
     && a2enmod headers \
