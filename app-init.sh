@@ -74,7 +74,8 @@ otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-d
 otrs.Console.pl Maint::Config::Rebuild
 
 # root password
-otrs.Console.pl Admin::User::SetPassword 'root@localhost' complemento
-echo "Password: complemento"
+otrs.Console.pl Admin::User::SetPassword 'root@localhost' ${ROOT_PASSWORD:-ligero}
+echo "Password: ligero"
+unset ROOT_PASSWORD
 
 echo "98" > $PROGRESSBAR_FILE
