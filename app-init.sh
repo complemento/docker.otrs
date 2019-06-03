@@ -43,13 +43,13 @@ let TOTAL_ITENS=$PACKAGE_COUNT+$SCRIPT_COUNT
 let PROGRESS_STEP=65/$TOTAL_ITENS
 
 # install packages
-otrs.Console.pl Maint::Config::Rebuild
-otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy
-otrs.Console.pl Maint::Config::Rebuild
+otrs.RebuildConfig.pl
+sed -i '10i\$Self->{\x27Package::AllowNotVerifiedPackages\x27} =  1;' /opt/otrs/Kernel/Config/Files/ZZZAuto.pm
+otrs.RebuildConfig.pl
 
 for PKG in $PACKAGE_LIST; do
     echo "$0 - Installing package $PKG"
-    otrs.Console.pl Admin::Package::Install --force --quiet $PKG 
+    otrs.PackageManager.pl -a install -p $PKG 
     let ITEM_COUNT+=1
     let PROGRESS=$PROGRESS_STEP*$ITEM_COUNT+30
     echo $PROGRESS > $PROGRESSBAR_FILE
@@ -68,14 +68,14 @@ done
 echo "95" > $PROGRESSBAR_FILE
 
 # enable secure mode
-otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy
+sed -i '10i\$Self->{\x27SecureMode\x27} =  \x271\x27;' /opt/otrs/Kernel/Config/Files/ZZZAuto.pm
 
 # apply config
-otrs.Console.pl Maint::Config::Rebuild
+otrs.RebuildConfig.pl
 
 # root password
-otrs.Console.pl Admin::User::SetPassword 'root@localhost' ${ROOT_PASSWORD:-ligero}
-echo "Password: ligero"
+otrs.SetPassword.pl root@localhost 'root@localhost' ${ROOT_PASSWORD:-root}
+echo "Password: ${ROOT_PASSWORD:-root}"
 unset ROOT_PASSWORD
 
 echo "98" > $PROGRESSBAR_FILE
