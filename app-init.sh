@@ -68,7 +68,7 @@ done
 echo "95" > $PROGRESSBAR_FILE
 
 # enable secure mode
-otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-deploy
+sed -i '10i\$Self->{\x27SecureMode\x27} =  \x271\x27;' /opt/otrs/Kernel/Config/Files/ZZZAuto.pm
 
 # apply config
 otrs.Console.pl Maint::Config::Rebuild
