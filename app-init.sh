@@ -74,7 +74,7 @@ sed -i '10i\$Self->{\x27SecureMode\x27} =  \x271\x27;' /opt/otrs/Kernel/Config/F
 otrs.RebuildConfig.pl
 
 # root password
-otrs.SetPassword.pl root@localhost 'root@localhost' ${ROOT_PASSWORD:-root}
+otrs.SetPassword.pl root@localhost ${ROOT_PASSWORD:-root}
 echo "Password: ${ROOT_PASSWORD:-root}"
 unset ROOT_PASSWORD
 
