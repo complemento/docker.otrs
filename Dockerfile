@@ -89,9 +89,9 @@ RUN mkdir /opt/otrs \
                 /opt/otrs/var/tmp \
                 /app-packages \
     && cd /app-packages \
-    && curl --silent -O http://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
-    && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
-    && curl --silent -O http://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
+    && curl --silent -O https://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
+    && curl --silent -O https://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
+    && curl --silent -O https://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
 
 WORKDIR /opt/otrs
 
