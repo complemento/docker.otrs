@@ -2,8 +2,8 @@ FROM ubuntu:precise
 
 ENV OTRS_VERSION=4.0.33 \
     ITSM_VERSION=4.0.33 \
-    FAQ_VERSION=4.0.33 \
-    SURVEY_VERSION=4.0.33 \
+    FAQ_VERSION=4.0.91 \
+    SURVEY_VERSION=4.0.91 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
