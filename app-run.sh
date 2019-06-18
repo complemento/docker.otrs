@@ -15,7 +15,7 @@ INITSCREEN_PID=$!
 sudo bash -c 'printenv | grep APP_ | sed "s/^\(.*\)$/export \1/g" > /etc/profile.d/app-env.sh'
 
 # database connection test
-while ! sudo otrs.Console.pl Maint::Database::Check 2> /tmp/console-maint-database-check.log; 
+while ! sudo /opt/otrs/bin/otrs.Console.pl Maint::Database::Check 2> /tmp/console-maint-database-check.log; 
 do
     egrep -o " Message: (.+)" /tmp/console-maint-database-check.log
 
