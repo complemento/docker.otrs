@@ -31,7 +31,7 @@ done
 echo "100" > $PROGRESSBAR_FILE
 
 # stop init-screen
-sudo kill -9 $INITSCREEN_PID
+sudo kill $INITSCREEN_PID
 
 if [ "$START_BACKEND" == "1" ]; then
     /opt/otrs/bin/Cron.sh start;
