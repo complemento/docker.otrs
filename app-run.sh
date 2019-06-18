@@ -8,20 +8,20 @@ echo "5" > $PROGRESSBAR_FILE
 
 
 # init-screen
-perl $INITSCREEN_DIR/httpserver.pl > /dev/null 2>&1 &
+sudo perl $INITSCREEN_DIR/httpserver.pl > /dev/null 2>&1 &
 INITSCREEN_PID=$!
 
 # set APP ENV vars
-printenv | grep APP_ | sed 's/^\(.*\)$/export \1/g' > /etc/profile.d/app-env.sh
+sudo bash -c 'printenv | grep APP_ | sed "s/^\(.*\)$/export \1/g" > /etc/profile.d/app-env.sh'
 
 # database connection test
-while ! su -c "otrs.Console.pl Maint::Database::Check" otrs 2> /tmp/console-maint-database-check.log; 
+while ! sudo otrs.Console.pl Maint::Database::Check 2> /tmp/console-maint-database-check.log; 
 do
     egrep -o " Message: (.+)" /tmp/console-maint-database-check.log
 
     # init configuration if empty
     grep "database content is missing" /tmp/console-maint-database-check.log \
-    && su -c "/app-init.sh" otrs;
+    && /app-init.sh;
     
     sleep 1;
 done
@@ -29,14 +29,14 @@ done
 echo "100" > $PROGRESSBAR_FILE
 
 # stop init-screen
-kill -9 $INITSCREEN_PID
+sudo kill -9 $INITSCREEN_PID
 
 if [ "$START_BACKEND" == "1" ]; then
-    /opt/otrs/bin/Cron.sh start otrs;
-    su -c "/opt/otrs/bin/otrs.Daemon.pl start" otrs;
+    /opt/otrs/bin/Cron.sh start;
+    /opt/otrs/bin/otrs.Daemon.pl start;
 else
-    /opt/otrs/bin/Cron.sh stop otrs;
+    /opt/otrs/bin/Cron.sh stop;
 fi;
 
 # run services
-exec supervisord
+exec sudo supervisord

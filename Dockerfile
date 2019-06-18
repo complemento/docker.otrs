@@ -6,7 +6,8 @@ ENV OTRS_VERSION=6.0.19 \
     SURVEY_VERSION=6.0.12 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8 
+    LC_ALL=en_US.UTF-8 \
+    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/otrs/bin
 
 SHELL ["/bin/bash", "-c"]
 
@@ -117,10 +118,9 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
     && echo "0 2 * * * $HOME/scripts/backup.pl -d /app-backups -r 15" > var/cron/app-backups.dist \
     && sed -i 's|$HOME/bin/otrs.Daemon.pl|. /etc/profile.d/app-env.sh; $HOME/bin/otrs.Daemon.pl|' var/cron/otrs_daemon \
-    && useradd -d /opt/otrs -c 'OTRS user' -s /bin/bash otrs \
-    && usermod -a -G www-data otrs \
-    && usermod -a -G otrs www-data \
+    && useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
     && usermod -a -G tty www-data \
+    && echo "otrs ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/otrs \
     && echo "PATH=\"$PATH:/opt/otrs/bin\"" > /etc/environment \
     && echo ". /etc/environment" > /opt/otrs/.profile \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
@@ -135,7 +135,6 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && curl --silent https://github.com/OTRS/otrs/commit/f2f1ebf9fb196dafb1a3252f93bed6c1c784940b.diff > /tmp/no-sslglue.diff \
     && patch -p1 < /tmp/no-sslglue.diff \
     && rm /tmp/no-sslglue.diff
-
 
 EXPOSE 80
 
