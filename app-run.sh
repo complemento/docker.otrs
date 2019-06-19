@@ -30,7 +30,7 @@ done
 echo "100" > $PROGRESSBAR_FILE
 
 # stop init-screen
-sudo pkill httpserver.pl
+sudo pkill perl
 
 if [ "$START_BACKEND" == "1" ]; then
     /opt/otrs/bin/Cron.sh start;
