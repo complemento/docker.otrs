@@ -121,8 +121,6 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
     && usermod -a -G tty www-data \
     && echo "otrs ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/otrs \
-    && echo "PATH=\"$PATH:/opt/otrs/bin\"" > /etc/environment \
-    && echo ". /etc/environment" > /opt/otrs/.profile \
     && bin/otrs.SetPermissions.pl --web-group=www-data \
     && bin/Cron.sh start otrs \
     && mkdir -p /var/log/supervisor \
