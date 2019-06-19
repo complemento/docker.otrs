@@ -9,7 +9,6 @@ echo "5" > $PROGRESSBAR_FILE
 
 # init-screen
 sudo perl $INITSCREEN_DIR/httpserver.pl > /dev/null 2>&1 &
-INITSCREEN_PID=$!
 
 # set APP ENV vars
 printenv | grep APP_ | sed "s/^\(.*\)$/export \1/g" > /tmp/app-env.sh
@@ -31,7 +30,7 @@ done
 echo "100" > $PROGRESSBAR_FILE
 
 # stop init-screen
-sudo kill $INITSCREEN_PID
+sudo pkill httpserver.pl
 
 if [ "$START_BACKEND" == "1" ]; then
     /opt/otrs/bin/Cron.sh start;
