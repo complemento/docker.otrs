@@ -41,4 +41,4 @@ else
 fi;
 
 # run services
-exec sudo supervisord
+exec sudo -E supervisord
