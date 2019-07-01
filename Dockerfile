@@ -136,6 +136,4 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
 
 EXPOSE 80
 
-USER otrs
-
 CMD /app-run.sh
