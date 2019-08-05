@@ -28,6 +28,7 @@ RUN apt-get update \
         curl \
         gettext \
         git-core \
+        graphviz \
         libapache2-mod-perl2 \
         libarchive-zip-perl \
         libauthen-ntlm-perl \
@@ -42,6 +43,7 @@ RUN apt-get update \
         libencode-hanextra-perl \
         libexpat1-dev \
         libgdbm3 \
+        libgraphviz-perl \
         libio-socket-ssl-perl \
         libjson-xs-perl \
         libmail-imapclient-perl \
