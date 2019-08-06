@@ -133,8 +133,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && mkdir /app-backups/ \
     && chown otrs:www-data /app-backups /var/www/html/* \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
-    && ln -sf /dev/stdout /var/log/apache2/error.log \
-    && rm /tmp/no-sslglue.diff
+    && ln -sf /dev/stdout /var/log/apache2/error.log 
 
 EXPOSE 80
 
