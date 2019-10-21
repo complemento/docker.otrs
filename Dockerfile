@@ -76,9 +76,10 @@ RUN apt-get update \
 RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
     && cpanm --sudo --quiet --notest \ 
             Cache::Memcached::Fast \
+            DateTime::TimeZone \
             HTTP::Server::Brick \
             Plack \
-            Search::Elasticsearch
+            Search::Elasticsearch 
 
 
 # OTRS code
