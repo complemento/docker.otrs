@@ -1,0 +1,312 @@
+#!/bin/bash
+# See: https://github.com/kward/shunit2
+
+if [ $UID != 0 ] && ! groups | grep -qw docker; then
+    echo "Run with sudo/root or add user $USER to group 'docker'"
+    exit 1
+fi
+
+argBuild=${1:-"build"}
+argOutput=${2:-"quiet"}
+argCleanup=${3:-"cleanup"}
+testDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+buildDir="$testDir/.."
+imageName="atmoz/sftp_test"
+buildOptions=(--tag "$imageName")
+
+if [ "$argOutput" == "quiet" ]; then
+    redirect="/dev/null"
+else
+    redirect="/dev/stdout"
+fi
+
+if [ ! -f "$testDir/shunit2/shunit2" ]; then
+    echo "Could not find shunit2 in $testDir/shunit2."
+    echo "Run 'git submodules init && git submodules update'"
+    exit 2
+fi
+
+# clear argument list (or shunit2 will try to use them)
+set --
+
+##############################################################################
+## Helper functions
+##############################################################################
+
+function oneTimeSetUp() {
+    if [ "$argBuild" == "build" ]; then
+        buildOptions+=("--no-cache" "--pull=true")
+    fi
+
+    # Build image
+    if ! docker build "${buildOptions[@]}" "$buildDir"; then
+        echo "Build failed"
+        exit 1
+    fi
+
+    # Generate temporary ssh keys for testing
+    if [ ! -f "/tmp/atmoz_sftp_test_rsa" ]; then
+        ssh-keygen -t rsa -f "/tmp/atmoz_sftp_test_rsa" -N '' > "$redirect" 2>&1
+    fi
+
+    # Private key can not be read by others (sshd will complain)
+    chmod go-rw "/tmp/atmoz_sftp_test_rsa"
+}
+
+function oneTimeTearDown() {
+    if [ "$argCleanup" == "cleanup" ]; then
+        docker image rm "$imageName" > "$redirect" 2>&1
+    fi
+}
+
+function setUp() {
+    # shellcheck disable=SC2154
+    containerName="atmoz_sftp_${_shunit_test_}"
+    containerTmpDir="$(mktemp -d "/tmp/${containerName}_XXXX")"
+    export containerName containerTmpDir
+
+    retireContainer "$containerName" # clean up leftover container
+}
+
+function tearDown() {
+    retireContainer "$containerName"
+
+    if [ "$argCleanup" == "cleanup" ] && [ -d "$containerTmpDir" ]; then
+        rm -rf "$containerTmpDir"
+    fi
+}
+
+function retireContainer() {
+    if [ "$(docker ps -qaf name="$1")" ]; then
+        if [ "$argOutput" != "quiet" ]; then
+            echo "Docker log for $1:"
+            docker logs "$1"
+        fi
+
+        if [ "$argCleanup" == "cleanup" ]; then
+            docker rm -fv "$1" > "$redirect" 2>&1
+        fi
+    fi
+}
+
+function getSftpIp() {
+    docker inspect -f "{{.NetworkSettings.IPAddress}}" "$1"
+}
+
+function runSftpCommands() {
+    ip="$(getSftpIp "$1")"
+    user="$2"
+    shift 2
+
+    commands=""
+    for cmd in "$@"; do
+        commands="$commands$cmd"$'\n'
+    done
+
+    echo "$commands" | sftp \
+        -i "/tmp/atmoz_sftp_test_rsa" \
+        -oStrictHostKeyChecking=no \
+        -oUserKnownHostsFile=/dev/null \
+        -b - "$user@$ip" \
+        > "$redirect" 2>&1
+
+    status=$?
+    sleep 1 # wait for commands to finish
+    return $status
+}
+
+function waitForServer() {
+    containerName="$1"
+    echo -n "Waiting for $containerName to open port 22 ..."
+
+    for _ in {1..30}; do
+        sleep 1
+        ip="$(getSftpIp "$containerName")"
+        echo -n "."
+        if [ -n "$ip" ] && nc -z "$ip" 22; then
+            echo " OPEN"
+            return 0;
+        fi
+    done
+
+    echo " TIMEOUT"
+    return 1
+}
+
+##############################################################################
+## Tests
+##############################################################################
+
+function testSmallestUserConfig() {
+    docker run --name "$containerName" \
+        --entrypoint="/bin/sh" \
+        "$imageName" \
+        -c "create-sftp-user u: && id u" \
+        > "$redirect" 2>&1
+    assertTrue "user created" $?
+}
+
+function testCreateUserWithDot() {
+    docker run --name "$containerName" \
+        --entrypoint="/bin/sh" \
+        "$imageName" \
+        -c "create-sftp-user user.with.dot: && id user.with.dot" \
+        > "$redirect" 2>&1
+    assertTrue "user created" $?
+}
+
+function testUserCustomUidAndGid() {
+    id="$(docker run --name "$containerName" \
+        --entrypoint="/bin/sh" \
+        "$imageName" \
+        -c "create-sftp-user u::1234:4321: > /dev/null && id u" )"
+
+    echo "$id" | grep -q 'uid=1234('
+    assertTrue "custom UID" $?
+
+    echo "$id" | grep -q 'gid=4321('
+    assertTrue "custom GID" $?
+
+    # Here we also check group name
+    assertEquals "uid=1234(u) gid=4321(group_4321) groups=4321(group_4321)" "$id"
+}
+
+function testCommandPassthrough() {
+    docker run --name "$containerName" \
+        "$imageName" test 1 -eq 1 \
+        > "$redirect" 2>&1
+    assertTrue "command passthrough" $?
+}
+
+function testUsersConf() {
+    docker run --name "$containerName" -d \
+        -v "$testDir/files/users.conf:/etc/sftp/users.conf:ro" \
+        "$imageName" \
+        > "$redirect" 2>&1
+
+    waitForServer "$containerName"
+    assertTrue "waitForServer" $?
+
+    docker exec "$containerName" id user-from-conf > /dev/null
+    assertTrue "user-from-conf" $?
+
+    docker exec "$containerName" id test > /dev/null
+    assertTrue "test" $?
+
+    docker exec "$containerName" id user.with.dot > /dev/null
+    assertTrue "user.with.dot" $?
+
+    docker exec "$containerName" test -d /home/test/dir1 -a -d /home/test/dir2
+    assertTrue "dirs exists" $?
+}
+
+function testLegacyUsersConf() {
+    docker run --name "$containerName" -d \
+        -v "$testDir/files/users.conf:/etc/sftp-users.conf:ro" \
+        "$imageName" \
+        > "$redirect" 2>&1
+
+    waitForServer "$containerName"
+    assertTrue "waitForServer" $?
+
+    docker exec "$containerName" id user-from-conf > /dev/null
+    assertTrue "user-from-conf" $?
+}
+
+function testCreateUsersUsingEnv() {
+    docker run --name "$containerName" -d \
+        -e "SFTP_USERS=user-from-env: user-from-env-2:" \
+        "$imageName" \
+        > "$redirect" 2>&1
+
+    waitForServer "$containerName"
+    assertTrue "waitForServer" $?
+
+    docker exec "$containerName" id user-from-env > /dev/null
+    assertTrue "user-from-env" $?
+
+    docker exec "$containerName" id user-from-env-2 > /dev/null
+    assertTrue "user-from-env-2" $?
+}
+
+function testCreateUsersUsingCombo() {
+    docker run --name "$containerName" -d \
+        -v "$testDir/files/users.conf:/etc/sftp-users.conf:ro" \
+        -e "SFTP_USERS=user-from-env:" \
+        "$imageName" \
+        user-from-cmd: \
+        > "$redirect" 2>&1
+
+    waitForServer "$containerName"
+    assertTrue "waitForServer" $?
+
+    docker exec "$containerName" id user-from-conf > /dev/null
+    assertTrue "user-from-conf" $?
+
+    docker exec "$containerName" id user-from-env > /dev/null
+    assertTrue "user-from-env" $?
+
+    docker exec "$containerName" id user-from-cmd > /dev/null
+    assertTrue "user-from-cmd" $?
+}
+
+function testWriteAccessToAutocreatedDirs() {
+    docker run --name "$containerName" -d \
+        -v "/tmp/atmoz_sftp_test_rsa.pub":/home/test/.ssh/keys/id_rsa.pub:ro \
+        "$imageName" "test::::testdir,dir with spaces" \
+        > "$redirect" 2>&1
+
+    waitForServer "$containerName"
+    assertTrue "waitForServer" $?
+
+    runSftpCommands "$containerName" "test" \
+        "cd testdir" \
+        "mkdir test" \
+        "cd '../dir with spaces'" \
+        "mkdir test" \
+        "exit"
+    assertTrue "runSftpCommands" $?
+
+    docker exec "$containerName" test -d /home/test/testdir/test
+    assertTrue "testdir write access" $?
+
+    docker exec "$containerName" test -d "/home/test/dir with spaces/test"
+    assertTrue "dir with spaces write access" $?
+}
+
+function testBindmountDirScript() {
+    mkdir -p "$containerTmpDir/custom/bindmount"
+    echo "mkdir -p /home/custom/bindmount && \
+        chown custom /custom /home/custom/bindmount && \
+        mount --bind /custom /home/custom/bindmount" \
+        > "$containerTmpDir/mount.sh"
+    chmod +x "$containerTmpDir/mount.sh"
+
+    docker run --name "$containerName" -d \
+        --privileged=true \
+        -v "/tmp/atmoz_sftp_test_rsa.pub":/home/custom/.ssh/keys/id_rsa.pub:ro \
+        -v "$containerTmpDir/custom/bindmount":/custom \
+        -v "$containerTmpDir/mount.sh":/etc/sftp.d/mount.sh \
+        "$imageName" custom:123 \
+        > "$redirect" 2>&1
+
+    waitForServer "$containerName"
+    assertTrue "waitForServer" $?
+
+    runSftpCommands "$containerName" "custom" \
+        "cd bindmount" \
+        "mkdir test" \
+        "exit"
+    assertTrue "runSftpCommands" $?
+
+    docker exec "$containerName" test -d /home/custom/bindmount/test
+    assertTrue "directory exist" $?
+}
+
+##############################################################################
+## Run
+##############################################################################
+
+# shellcheck disable=SC1090
+source "$testDir/shunit2/shunit2"
+# Nothing happens after this

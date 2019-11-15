@@ -4,6 +4,14 @@ RUN sudo apt-get update \
     && sudo apt-get install -y \
        ssh \
     && sudo apt-get clean \
-    && sudo rm -rf /var/lib/apt/lists/* 
+    && sudo rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/run/sshd \
+    && rm -f /etc/ssh/ssh_host_*key*
 
-CMD [ "/usr/sbin/sshd -D" ]
+COPY files/sshd_config /etc/ssh/sshd_config
+COPY files/create-sftp-user /usr/local/bin/
+COPY files/entrypoint /
+
+EXPOSE 22
+
+ENTRYPOINT ["/entrypoint"]
