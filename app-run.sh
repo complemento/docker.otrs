@@ -22,6 +22,8 @@ do
     # init configuration if empty
     grep "database content is missing" /tmp/console-maint-database-check.log \
     && su -c "/app-init.sh" otrs;
+
+    /opt/otrs/bin/otrs.SetPermissions.pl
     
     sleep 1;
 done
