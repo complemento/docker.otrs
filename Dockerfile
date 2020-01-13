@@ -109,13 +109,13 @@ COPY init-screen/* /var/www/html/
 COPY .my.cnf /root/
 COPY .my.cnf /opt/otrs/
 COPY custom-500.html.var /usr/share/apache2/error/
-COPY custom-error-page.conf /etc/apache2/conf-available/
+COPY custom-config.conf /etc/apache2/conf-available/
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf \
     && a2dismod mpm_event \
     && a2enmod mpm_prefork headers perl include \
-    && a2enconf otrs custom-error-page app-env \
+    && a2enconf otrs custom-config app-env \
     && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
     && mv var/cron/aaa_base.dist var/cron/aaa_base \
     && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
