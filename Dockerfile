@@ -110,7 +110,7 @@ WORKDIR /opt/otrs
 # include files
 COPY Config.pm /opt/otrs/Kernel/Config.pm
 COPY ./supervisor.d /etc/supervisor.d
-COPY ./nginx/* /etc/nginx/
+COPY ./nginx/conf.d/* /etc/nginx/conf.d/
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
 COPY init-screen/* /var/www/html/
