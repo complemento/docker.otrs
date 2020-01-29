@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM nginx:alpine-perl
 
 ENV OTRS_VERSION=6.0.23 \
     ITSM_VERSION=6.0.23 \
@@ -9,78 +9,84 @@ ENV OTRS_VERSION=6.0.23 \
     LC_ALL=en_US.UTF-8 \
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/otrs/bin
 
-SHELL ["/bin/bash", "-c"]
-
-# Language
-RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
-    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "pt_BR.UTF-8 UTF-8" >> /etc/locale.gen \
-    && locale-gen \
-    && update-locale LANG=${LANG}
-
-# Packages
-RUN apt-get update \
-    && apt-get install -y \
-        apache2 \
-        bash-completion \
-        build-essential \
-        cron \
+RUN deluser xfs \
+    && delgroup www-data \
+    && addgroup -g 33 www-data \
+    && adduser otrs -D -G www-data \
+    && sed -i 's/nginx:x:101:101/nginx:x:101:33/' /etc/passwd \
+    && sed -i 's/user  nginx;/user  nginx www-data;/' /etc/nginx/nginx.conf \
+    && apk add \
+        bash \
+        build-base \
         curl \
-        gettext \
-        git-core \
+        expat-dev \
+        git \
         graphviz \
-        libapache2-mod-perl2 \
-        libarchive-zip-perl \
-        libauthen-ntlm-perl \
-        libauthen-sasl-perl \
-        libcrypt-eksblowfish-perl \
-        libcrypt-ssleay-perl \
-        libdatetime-perl \
-        libdbd-mysql-perl \
-        libdbd-odbc-perl \
-        libdbd-pg-perl \
-        libdbi-perl \
-        libencode-hanextra-perl \
-        libexpat1-dev \
-        libgdbm3 \
-        libgraphviz-perl \
-        libio-socket-ssl-perl \
-        libjson-xs-perl \
-        libmail-imapclient-perl \
-        libnet-dns-perl \
-        libnet-ldap-perl \
-        libssl-dev \
-        libtemplate-perl \
-        libterm-readline-perl-perl \
-        libtext-csv-xs-perl \
-        libtimedate-perl \
-        libxml-libxml-perl \
-        libxml-libxslt-perl \
-        libxml-parser-perl \
-        libxml2-utils \
-        libyaml-libyaml-perl \
         mysql-client \
-        perl \
-        postgresql-client \
-        sendmail \
+        openssl \
+        openssl-dev \
+        perl-app-cpanminus \
+        perl-crypt-ssleay \
+        perl-dbd-mysql \
+        perl-dbi \
+        perl-dev \
+        perl-xml-libxslt \
+        postgresql-dev \
         sudo \
         supervisor \
-        tzdata \
+        unixodbc-dev \
         unzip \
+        wget \
         vim \
         zip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* 
+        zlib \
+        zlib-dev \
+    && cpanm --notest \
+        Archive::Tar \
+        Archive::Zip \
+        Authen::NTLM \
+        Authen::SASL \
+        Cache::Memcached::Fast \
+        CGI::Compile \
+        CGI::Emulate::PSGI \
+        Crypt::Eksblowfish::Bcrypt \
+        Crypt::SSLeay Date::Format \
+        DateTime DBI \
+        DBD::mysql \
+        DBD::ODBC \
+        DBD::Pg \
+        Digest::SHA \
+        Encode::HanExtra \
+        HTML::Entities \
+        HTTP::Server::Brick \
+        IO::Socket::SSL \
+        IO::Socket::SSL \
+        JSON::XS \
+        List::Util::XS \
+        LWP::UserAgent \
+        Mail::IMAPClient \
+        Module::Refresh \
+        Net::DNS \
+        Net::LDAP \
+        Plack \
+        Search::Elasticsearch \
+        Template \
+        Template::Stash::XS \
+        Text::CSV_XS \
+        Time::HiRes \
+        XML::LibXML \
+        XML::Parser \
+        YAML::XS \
+    && apk del \
+        build-base \
+        expat-dev \
+        openssl-dev \
+        perl-dev \
+        postgresql-dev \
+        unixodbc-dev \
+        zlib-dev
 
-# Extra perl modules
-RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
-    && cpanm --sudo --quiet --notest \ 
-            Cache::Memcached::Fast \
-            DateTime::TimeZone \
-            HTTP::Server::Brick \
-            Plack \
-            Search::Elasticsearch 
-
+SHELL ["/bin/bash", "-c"]
 
 # OTRS code
 RUN mkdir /opt/otrs \
@@ -101,40 +107,30 @@ WORKDIR /opt/otrs
 
 # include files
 COPY Config.pm /opt/otrs/Kernel/Config.pm
-COPY app-env.conf /etc/apache2/conf-available/app-env.conf
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./supervisor.d /etc/supervisor.d
+COPY ./nginx/default.conf /etc/nginx/default.conf
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
 COPY init-screen/* /var/www/html/
 COPY .my.cnf /root/
 COPY .my.cnf /opt/otrs/
-COPY custom-500.html.var /usr/share/apache2/error/
-COPY custom-config.conf /etc/apache2/conf-available/
+
 
 # post configuration
-RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf \
-    && a2dismod mpm_event \
-    && a2enmod mpm_prefork headers perl include \
-    && a2enconf otrs custom-config app-env \
-    && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
+RUN sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
     && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
     && echo '0 2 * * * /opt/otrs/scripts/backup.pl -d /app-backups -r 15' > var/cron/app-backups \
     && sed -i 's|$HOME/bin/otrs.Daemon.pl|. /etc/profile.d/app-env.sh; /opt/otrs/bin/otrs.Daemon.pl|' var/cron/otrs_daemon \
-    && useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
-    && usermod -a -G tty www-data \
     && echo "PATH=\"$PATH:/opt/otrs/bin\"" > /etc/environment \
     && echo ". /etc/environment" > /opt/otrs/.profile \
     && echo "otrs ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/otrs \
     && chown otrs:www-data -R /opt/otrs \
     && chmod 775 -R /opt/otrs \
     && bin/Cron.sh start otrs \
-    && mkdir -p /var/log/supervisor \
     && chmod +x /*.sh \
     && mkdir /app-init.d/ \
     && mkdir /app-backups/ \
-    && chown otrs:www-data /app-backups /var/www/html/* \
-    && ln -sf /dev/stdout /var/log/apache2/access.log \
-    && ln -sf /dev/stdout /var/log/apache2/error.log 
+    && chown otrs:www-data /app-backups /var/www/html/* 
 
 EXPOSE 80
 
