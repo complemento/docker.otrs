@@ -78,6 +78,4 @@ otrs.Console.pl Admin::User::SetPassword 'root@localhost' ${ROOT_PASSWORD:-liger
 echo "Password: ligero"
 unset ROOT_PASSWORD
 
-otrs.Console.pl Maint::Loader::CacheGenerate
-
 echo "98" > $PROGRESSBAR_FILE
