@@ -43,7 +43,7 @@ fi;
 
 
 if [ "$DEBUG_MODE" == "1"]; then
-    export PLACK_ENV=deployment
+    export PLACK_ENV=development
 else
     export PLACK_ENV=deployment
 fi;
