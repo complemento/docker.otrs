@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # --
-# Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
+# Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # --
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@ use strict;
 use warnings;
 
 # use ../../ as lib location
-#use FindBin qw($Bin);
-my $APP_BIN = "/opt/otrs/bin/cgi-bin";
-use lib "/opt/otrs";
-use lib "/opt/otrs/Kernel/cpan-lib";
-use lib "/opt/otrs/Custom";
+use FindBin qw($Bin);
+BEGIN { $Bin = "/opt/otrs/bin/cgi-bin"; }
+use lib "$Bin/../..";
+use lib "$Bin/../../Kernel/cpan-lib";
+use lib "$Bin/../../Custom";
 
 ## nofilter(TidyAll::Plugin::OTRS::Perl::SyntaxCheck)
 
@@ -55,11 +55,11 @@ my $App = CGI::Emulate::PSGI->handler(
         # Populate SCRIPT_NAME as OTRS needs it in some places.
         $ENV{SCRIPT_NAME} = $ENV{PATH_INFO};
 
-        my ( $Script ) = $ENV{PATH_INFO} =~ m{/([A-Za-z\-_]+\.pl)};    ## no critic
+        my ( $HandleScript ) = $ENV{PATH_INFO} =~ m{/([A-Za-z\-_]+\.pl)};    ## no critic
  
         # Fallback to agent login if we could not determine handle...i
-        if ( !defined $Script || !-e "$APP_BIN/$Script" ) {
-            $Script = 'index.pl';                                   ## no critic
+        if ( !defined $HandleScript || !-e "$Bin/$HandleScript" ) {
+            $HandleScript = 'index.pl';                                   ## no critic
         }
 
         eval {
@@ -77,7 +77,7 @@ my $App = CGI::Emulate::PSGI->handler(
 
         # Load the requested script
         eval {
-            do "$APP_BIN/$Script";
+            do "$Bin/$HandleScript";
         };
         if ( $@ && $@ ne "exit called\n" ) {
             warn $@;
@@ -105,7 +105,7 @@ my $StaticPath = sub {
 builder {
     enable "Static",
         path        => $StaticPath,
-        root        => "$APP_BIN/../../var/httpd/htdocs",
+        root        => "$Bin/../../var/httpd/htdocs",
         pass_trough => 0;
     $App;
 }
