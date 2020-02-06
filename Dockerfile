@@ -56,6 +56,7 @@ RUN deluser xfs \
         DBD::mysql \
         DBD::ODBC \
         DBD::Pg \
+        Devel::NYTProf \
         Digest::SHA \
         Encode::HanExtra \
         HTML::Entities \
