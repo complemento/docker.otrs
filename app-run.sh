@@ -43,7 +43,9 @@ fi;
 
 
 if [ "$DEBUG_MODE" == "1"]; then
-    export PLACK_ENV=development
+    export PLACK_ENV=deployment
+else
+    export PLACK_ENV=deployment
 fi;
 
 # run services
