@@ -116,6 +116,7 @@ COPY app-run.sh /app-run.sh
 COPY init-screen/* /opt/otrs/var/httpd/htdocs/
 COPY .my.cnf /root/
 COPY .my.cnf /opt/otrs/
+COPY app.psgi /app.psgi
 
 
 # post configuration
