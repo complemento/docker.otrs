@@ -113,7 +113,7 @@ COPY ./supervisor.d /etc/supervisor.d
 COPY ./nginx/conf.d/* /etc/nginx/conf.d/
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
-COPY init-screen/* /var/www/html/
+COPY init-screen/* /opt/otrs/var/httpd/htdocs/
 COPY .my.cnf /root/
 COPY .my.cnf /opt/otrs/
 
