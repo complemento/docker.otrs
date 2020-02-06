@@ -24,6 +24,7 @@ RUN deluser xfs \
         git \
         graphviz \
         mysql-client \
+        openssh-client \
         openssl \
         openssl-dev \
         perl-app-cpanminus \
