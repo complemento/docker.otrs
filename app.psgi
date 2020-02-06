@@ -71,8 +71,9 @@ my $App = CGI::Emulate::PSGI->handler(
 
         my $Profile;
         if ( $ENV{NYTPROF} && $ENV{REQUEST_URI} =~ /NYTProf=([\w-]+)/ ) {
+            use Devel::NYTProf;
             $Profile = 1;
-            DB::enable_profile("nytprof-$1.out");
+            DB::enable_profile("$Bin/../../var/log/nytprof-$1.out");
         }
 
         # Load the requested script
