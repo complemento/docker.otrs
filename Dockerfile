@@ -7,7 +7,8 @@ ENV OTRS_VERSION=6.0.23 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
-    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/otrs/bin
+    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/otrs/bin \
+    PLACK_ENV=deployment
 
 RUN deluser xfs \
     && delgroup www-data \

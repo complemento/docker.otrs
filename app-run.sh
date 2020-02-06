@@ -41,5 +41,10 @@ else
     /opt/otrs/bin/Cron.sh stop otrs;
 fi;
 
+
+if [ "$DEBUG_MODE" == "1"]; then
+    export PLACK_ENV=development
+fi;
+
 # run services
 exec supervisord
