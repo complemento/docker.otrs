@@ -22,6 +22,7 @@ RUN deluser xfs \
         expat-dev \
         git \
         graphviz \
+        libpq \
         mysql-client \
         openssh-client \
         openssl \
@@ -85,7 +86,6 @@ RUN deluser xfs \
         expat-dev \
         openssl-dev \
         perl-dev \
-        postgresql-dev \
         unixodbc-dev \
         zlib-dev
 
