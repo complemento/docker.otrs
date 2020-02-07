@@ -32,6 +32,7 @@ RUN deluser xfs \
         perl-dbi \
         perl-dev \
         perl-xml-libxslt \
+        postgresql-client \
         postgresql-dev \
         sudo \
         supervisor \
