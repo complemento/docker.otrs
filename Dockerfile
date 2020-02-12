@@ -102,7 +102,6 @@ RUN mkdir /opt/otrs \
                 /opt/otrs/var/tmp \
                 /app-packages \
                 /var/www \
-    && ln -sf /usr/share/nginx/html/ /var/www/html \
     && cd /app-packages \
     && curl --silent -O https://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
     && curl --silent -O https://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
@@ -116,7 +115,7 @@ COPY ./supervisor.d /etc/supervisor.d
 COPY ./nginx/conf.d/* /etc/nginx/conf.d/
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
-COPY init-screen/* /opt/otrs/var/httpd/htdocs/
+COPY init-screen/* /var/www/html/
 COPY .my.cnf /root/
 COPY .my.cnf /opt/otrs/
 COPY app.psgi /app.psgi
