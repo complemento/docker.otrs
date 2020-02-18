@@ -102,7 +102,7 @@ WORKDIR /opt/otrs
 # include files
 COPY Config.pm /opt/otrs/Kernel/Config.pm
 COPY app-env.conf /etc/apache2/conf-available/app-env.conf
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY supervisord/* /etc/supervisor/conf.d/
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
 COPY init-screen/* /var/www/html/
