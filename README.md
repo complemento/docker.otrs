@@ -88,7 +88,7 @@ You can edit your docker-compose.yaml and adapt to your reallity
 | VARIABLE | Default | DESCRIPTION  |
 |--|--|--|
 | APP_DatabaseType | mysql | Used for setting database type connection. Possible values: mysql, postgresql, odbc |
-| APP_DatabaseHost | mysql | Database server hostname or IP |
+| APP_DatabaseHost | database | Database server hostname or IP |
 | APP_Database | ligero | Database name
 | APP_DatabaseUser | root | Database user name |
 | APP_DatabasePw | 1 | Database password |
