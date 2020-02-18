@@ -63,6 +63,7 @@ RUN apt-get update \
         perl \
         postgresql-client \
         sendmail \
+        ssh \
         sudo \
         supervisor \
         tzdata \
@@ -110,6 +111,7 @@ COPY .my.cnf /root/
 COPY .my.cnf /opt/otrs/
 COPY custom-500.html.var /usr/share/apache2/error/
 COPY custom-config.conf /etc/apache2/conf-available/
+COPY motd /etc/motd
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf \
@@ -131,6 +133,8 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && chmod +x /*.sh \
     && mkdir /app-init.d/ \
     && mkdir /app-backups/ \
+    && mkdir /var/run/sshd \
+    && rm /etc/update-motd.d/* \
     && chown otrs:www-data /app-backups /var/www/html/* \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
     && ln -sf /dev/stdout /var/log/apache2/error.log 

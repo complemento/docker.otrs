@@ -4,6 +4,7 @@ export INITSCREEN_DIR=/var/www/html
 export PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
 export START_BACKEND=${START_BACKEND:-1}
 export START_FRONTEND=${START_FRONTEND:-1}
+export START_SSHD=${START_SSHD:-0}
 export DEBUG_MODE=${DEBUG_MODE:-0}
 
 echo "5" > $PROGRESSBAR_FILE
@@ -30,6 +31,15 @@ do
     
     sleep 1;
 done
+
+if [ $START_SSHD != '0' ]; then
+    if [ -z "$SSH_PASSWORD" ]; then
+        echo "$0 - Set SSH_PASSWORD for otrs user or put your public RSA key on /opt/otrs/.ssh/authorized_keys"
+    else
+        # set otrs password
+        echo -e "$SSH_PASSWORD\n$SSH_PASSWORD\n" | passwd otrs 2> /dev/null
+    fi;
+fi;
 
 echo "100" > $PROGRESSBAR_FILE
 
