@@ -31,13 +31,6 @@ do
     sleep 1;
 done
 
-if [ "$START_BACKEND" == "1" ]; then
-    /opt/otrs/bin/Cron.sh start otrs;
-    su -c "/opt/otrs/bin/otrs.Daemon.pl start" otrs;
-else
-    /opt/otrs/bin/Cron.sh stop otrs;
-fi;
-
 echo "100" > $PROGRESSBAR_FILE
 
 # stop init-screen
