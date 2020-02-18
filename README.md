@@ -94,6 +94,7 @@ You can edit your docker-compose.yaml and adapt to your reallity
 | APP_DatabasePw | 1 | Database password |
 | APP_NodeID | 1 | Set NodeID variable on OTRS, for cluster configuration. The purpose of this parameter is for scalability solutions integration like Docker Swarm or Kubernetes |
 | START_BACKEND | 1 | Starts Cron.sh and otrs.Daemon.pl. |
+| RESTORE_DIR | [directory with backup files] | Restore backup files (this works only on first run enviroment with empty database) |
 
 
 ### Standalone container

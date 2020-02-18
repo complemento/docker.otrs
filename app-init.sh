@@ -10,60 +10,86 @@ SCRIPT_LIST=`ls /app-init.d/*.sh 2> /dev/null`
 SCRIPT_COUNT=`ls -1 /app-init.d/*.sh 2> /dev/null | wc -l`
 
 
-# Database installation
-case $APP_DatabaseType in
 
-mysql)
-    
-    echo "$0 - Loading MySQL data"
-    
-    mysql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" ${APP_Database} < /opt/otrs/scripts/database/otrs-schema.mysql.sql \
-    && mysql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" ${APP_Database} < /opt/otrs/scripts/database/otrs-initial_insert.mysql.sql \
-    && mysql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" ${APP_Database} < /opt/otrs/scripts/database/otrs-schema-post.mysql.sql
-    
-    [ $? -gt 0 ] && echo "Error loading MySQL data" && exit 1;
-    
-    ;;
+if [ -d "$RESTORE_DIR" ]; then
+    #
+    # restore system from backup dir
+    #
+    echo "$0 - Restoring backup $RESTORE_DIR"
 
-postgresql)
+    echo "30" > $PROGRESSBAR_FILE
 
-    #TODO
-    echo "$0 - Loading PostgreSQL data"
-    #psql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" "CREATE DATABASE ${APP_Database}"
-    ;;
+    cp Kernel/Config.pm{,_tmp}
+    /opt/otrs/scripts/restore.pl -d /opt/otrs -b $RESTORE_DIR
+    cp Kernel/Config.pm{,_restored}
+    mv Kernel/Config.pm{_tmp,}
 
-*) 
-    echo "$0 - APP_DatabaseType is not set";
-    exit 1;
-esac;
+else
 
-# progress bar for init screen
-echo "30" > $PROGRESSBAR_FILE
-let TOTAL_ITENS=$PACKAGE_COUNT+$SCRIPT_COUNT
-let PROGRESS_STEP=65/$TOTAL_ITENS
+    #
+    # system installation
+    #
+    case $APP_DatabaseType in
 
-# install packages
-otrs.Console.pl Maint::Config::Rebuild
-otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy
-otrs.Console.pl Maint::Config::Rebuild
+    mysql)
+        
+        echo "$0 - Loading MySQL data"
+        
+        mysql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" ${APP_Database} < /opt/otrs/scripts/database/otrs-schema.mysql.sql \
+        && mysql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" ${APP_Database} < /opt/otrs/scripts/database/otrs-initial_insert.mysql.sql \
+        && mysql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" ${APP_Database} < /opt/otrs/scripts/database/otrs-schema-post.mysql.sql
+        
+        [ $? -gt 0 ] && echo "Error loading MySQL data" && exit 1;
+        
+        ;;
 
-for PKG in $PACKAGE_LIST; do
-    echo "$0 - Installing package $PKG"
-    otrs.Console.pl Admin::Package::Install --force --quiet $PKG 
-    let ITEM_COUNT+=1
-    let PROGRESS=$PROGRESS_STEP*$ITEM_COUNT+30
-    echo $PROGRESS > $PROGRESSBAR_FILE
-done;
+    postgresql)
+
+        #TODO
+        echo "$0 - Loading PostgreSQL data"
+        #psql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" "CREATE DATABASE ${APP_Database}"
+        ;;
+
+    *) 
+        echo "$0 - APP_DatabaseType is not set";
+        exit 1;
+    esac;
+
+    # progress bar for init screen
+    echo "30" > $PROGRESSBAR_FILE
+    let TOTAL_ITENS=$PACKAGE_COUNT+$SCRIPT_COUNT
+    let PROGRESS_STEP=65/$TOTAL_ITENS
+
+    # install packages
+    otrs.Console.pl Maint::Config::Rebuild
+    otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy
+    otrs.Console.pl Maint::Config::Rebuild
+
+    for PKG in $PACKAGE_LIST; do
+        echo "$0 - Installing package $PKG"
+        otrs.Console.pl Admin::Package::Install --force --quiet $PKG 
+        let ITEM_COUNT+=1
+        let PROGRESS=$PROGRESS_STEP*$ITEM_COUNT+30
+        echo $PROGRESS > $PROGRESSBAR_FILE
+    done;
 
 
-# run custom init scripts
-for f in $SCRIPT_LIST; do
-    echo "$0 - running $f"
-    bash "$f"
-    let ITEM_COUNT+=1
-    let PROGRESS=$PROGRESS_STEP*$ITEM_COUNT+30
-    echo $PROGRESS > $PROGRESSBAR_FILE
-done
+    # run custom init scripts
+    for f in $SCRIPT_LIST; do
+        echo "$0 - running $f"
+        bash "$f"
+        let ITEM_COUNT+=1
+        let PROGRESS=$PROGRESS_STEP*$ITEM_COUNT+30
+        echo $PROGRESS > $PROGRESSBAR_FILE
+    done
+
+    # root password
+    otrs.Console.pl Admin::User::SetPassword 'root@localhost' ${ROOT_PASSWORD:-ligero}
+    echo "default user: root@localhost"
+    echo "default password: ligero"
+    unset ROOT_PASSWORD
+
+fi;
 
 echo "95" > $PROGRESSBAR_FILE
 
@@ -73,9 +99,8 @@ otrs.Console.pl Admin::Config::Update --setting-name SecureMode --value 1 --no-d
 # apply config
 otrs.Console.pl Maint::Config::Rebuild
 
-# root password
-otrs.Console.pl Admin::User::SetPassword 'root@localhost' ${ROOT_PASSWORD:-ligero}
-echo "Password: ligero"
-unset ROOT_PASSWORD
+otrs.Console.pl Maint::Log::Clear
 
 echo "98" > $PROGRESSBAR_FILE
+
+exit 0
