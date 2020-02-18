@@ -127,7 +127,6 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && echo "otrs ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/otrs \
     && chown otrs:www-data -R /opt/otrs \
     && chmod 775 -R /opt/otrs \
-    && bin/Cron.sh start otrs \
     && mkdir -p /var/log/supervisor \
     && chmod +x /*.sh \
     && mkdir /app-init.d/ \

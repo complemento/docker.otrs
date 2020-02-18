@@ -3,6 +3,7 @@
 INITSCREEN_DIR=/var/www/html
 PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
 START_BACKEND=${START_BACKEND:-1}
+START_FRONTEND=${START_FRONTEND:-1}
 
 echo "5" > $PROGRESSBAR_FILE
 
@@ -29,17 +30,25 @@ do
     sleep 1;
 done
 
-echo "100" > $PROGRESSBAR_FILE
-
-# stop init-screen
-kill -9 $INITSCREEN_PID
+if [ "$START_FRONTEND" == "1" ]; then
+    sed -i 's/autostart=.*/autostart=true/' /etc/supervisor/conf.d/apache2.conf
+else
+    sed -i 's/autostart=.*/autostart=false/' /etc/supervisor/conf.d/apache2.conf
+fi;
 
 if [ "$START_BACKEND" == "1" ]; then
     /opt/otrs/bin/Cron.sh start otrs;
     su -c "/opt/otrs/bin/otrs.Daemon.pl start" otrs;
+    sed -i 's/autostart=.*/autostart=true/'  /etc/supervisor/conf.d/cron.conf
 else
     /opt/otrs/bin/Cron.sh stop otrs;
+    sed -i 's/autostart=.*/autostart=false/' /etc/supervisor/conf.d/cron.conf
 fi;
+
+echo "100" > $PROGRESSBAR_FILE
+
+# stop init-screen
+kill -9 $INITSCREEN_PID
 
 # run services
 exec supervisord
