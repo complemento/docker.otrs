@@ -137,7 +137,8 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && rm /etc/update-motd.d/* \
     && chown otrs:www-data /app-backups /var/www/html/* \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
-    && ln -sf /dev/stdout /var/log/apache2/error.log 
+    && ln -sf /dev/stdout /var/log/apache2/error.log \
+    && sed -i 's/access.log combined/access.log combined env=!dontlog/' /etc/apache2/sites-available/*
 
 EXPOSE 80
 
