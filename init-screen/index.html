@@ -60,6 +60,8 @@
         let appSiteURL = '/otrs/index.pl'
         let appStatusProgressURL = 'progress.txt'
         let progressBar = document.getElementById("progressBar")
+        let siteCheck = null;
+        let progressBarCheck = null;
 
         setProgressBar = (progress) => {
             progressBar.value = progress;
@@ -90,21 +92,21 @@
                 .then(response => response.json())
                 .then(setProgressBar)
                 .catch(indeterminateProgressBar);
+            progressBarCheck = setTimeout(progressFetch, 1000);
         }
-
-        progressBarCheck = setInterval(progressFetch, 1000);
 
         siteFetch = async () => { 
             await fetch(appSiteURL, {cache: "no-cache"})
                 .then(response => response.text())
                 .then(loadSite)
                 .catch(indeterminateProgressBar)
+            siteCheck = setTimeout(siteFetch, 2000);
         }
-
-        siteCheck = setInterval(siteFetch, 2000);
 
         window.onload = function() {
             document.getElementById('box').setAttribute('class','fadeout');
+            siteFetch();
+            progressFetch();
         }
 
     </script>
