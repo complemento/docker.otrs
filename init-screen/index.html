@@ -60,6 +60,8 @@
         let appSiteURL = '/otrs/index.pl'
         let appStatusProgressURL = 'progress.txt'
         let progressBar = document.getElementById("progressBar")
+        let siteCheck = null;
+        let progressBarCheck = null;
 
         setProgressBar = (progress) => {
             progressBar.value = progress;
