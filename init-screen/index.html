@@ -10,12 +10,15 @@
 
             body{
                 background-color: #ffffff;
+            }
+
+            #box {
                 -moz-transition: opacity 1.5s;
                 -webkit-transition: opacity 1.5s;
                 -o-transition: opacity 1.5s;
                 transition: opacity 1.5s;
             }
-
+            
             .fadein {
                 opacity: 0;
             }
@@ -44,11 +47,13 @@
         </style>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     </head>
-    <body class="fadein">
+    <body>
         <div class="center">
-            <img src="logo.png" />
-            <progress id="progressBar" max="100"></progress>
+            <div id="box" class="fadein">
+                <img src="logo.png" />
+                <progress id="progressBar" max="100"></progress>
             </div>
+        </div>
     </body>
     <script>
 
@@ -99,7 +104,7 @@
         siteCheck = setInterval(siteFetch, 2000);
 
         window.onload = function() {
-            document.body.setAttribute('class','fadeout');
+            document.getElementById('box').setAttribute('class','fadeout');
         }
 
     </script>
