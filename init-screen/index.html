@@ -85,8 +85,8 @@
             }
         }
 
-        progressFetch = () => { 
-            fetch(appStatusProgressURL, {cache: "no-cache"})
+        progressFetch = async () => { 
+            await fetch(appStatusProgressURL, {cache: "no-cache"})
                 .then(response => response.json())
                 .then(setProgressBar)
                 .catch(indeterminateProgressBar);
@@ -94,8 +94,8 @@
 
         progressBarCheck = setInterval(progressFetch, 1000);
 
-        siteFetch = () => { 
-            fetch(appSiteURL, {cache: "no-cache"})
+        siteFetch = async () => { 
+            await fetch(appSiteURL, {cache: "no-cache"})
                 .then(response => response.text())
                 .then(loadSite)
                 .catch(indeterminateProgressBar)
