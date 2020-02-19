@@ -21,7 +21,7 @@ $server->mount( '/' => {
 $server->mount( '/otrs/' => {
     handler => sub {
         my ($req, $res) = @_;
-        $res->add_content('<meta http-equiv="refresh" content="0; URL=/" />');
+        $res->add_content('<!-- init-screen-redirection --><meta http-equiv="refresh" content="0; URL=/" />');
         1;
     },
     wildcard => 1,

@@ -10,13 +10,29 @@
 
             body{
                 background-color: #ffffff;
+                -moz-transition: opacity 1.5s;
+                -webkit-transition: opacity 1.5s;
+                -o-transition: opacity 1.5s;
+                transition: opacity 1.5s;
             }
+
+            .fadein {
+                opacity: 0;
+            }
+
+            .fadeout {
+                opacity: 1;
+            }
+
             h1,h2,h3 {
                 color: #355683;
             }
             img {
                 margin: 10% auto;
+                height: 79px;
                 display: block;
+                transform-origin: left top;
+                animation: scale 2000ms ease-in-out forwards;
             }
 
             .center {
@@ -24,58 +40,67 @@
                 width: 50%;
                 padding: 10px;
             }
+
         </style>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     </head>
-    <body>
+    <body class="fadein">
         <div class="center">
             <img src="logo.png" />
             <progress id="progressBar" max="100"></progress>
             </div>
     </body>
     <script>
-        function isSiteOnline(url,callback) {
-            // try to load favicon
-            var timer = setTimeout(function(){
-                // timeout after 5 seconds
-                callback(false);
-            },5000)
 
-            var img = document.createElement("img");
-            img.onload = function() {
-                clearTimeout(timer);
-                callback(true);
+        let appSiteURL = '/otrs/index.pl'
+        let appStatusProgressURL = 'progress.txt'
+        let progressBar = document.getElementById("progressBar")
+
+        setProgressBar = (progress) => {
+            progressBar.value = progress;
+
+            if(progress == '100') {
+                clearInterval(progressBarCheck)
             }
 
-            img.onerror = function() {
-                clearTimeout(timer);
-                callback(false);
+            if(progress == '') {
+                indeterminateProgressBar();
             }
-
-            img.src = url;
         }
 
-        var xmlhttp = new XMLHttpRequest();
-        var progress = 0;
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("progressBar").value = progress = this.responseText;
-            } 
-        };
+        indeterminateProgressBar = (e) => {
+            progressBar.removeAttribute('value');
+            if(e) console.error(e);
+        }
 
-        progressCheck = setInterval(function(){
-            xmlhttp.open("GET", "progress.txt", true);
-            xmlhttp.send();
-        },3000)
-
-        siteCheck = setInterval(function(){
-            isSiteOnline("/otrs-web/skins/Agent/default/img/icons/product.ico?n="+Math.random(),function(found){
-                if(found) {
-                    clearTimeout(siteCheck);
-                    window.location.href = '/otrs/index.pl';
-                }
+        loadSite = (value) => {
+            if( ! value.match(/^<!-- init-screen-redirection -->/) ) {
+                clearInterval(siteCheck);
+                window.location.href = appSiteURL;
             }
-        )},5000)
-        
+        }
+
+        progressFetch = () => { 
+            fetch(appStatusProgressURL, {cache: "no-cache"})
+                .then(response => response.json())
+                .then(setProgressBar)
+                .catch(indeterminateProgressBar);
+        }
+
+        progressBarCheck = setInterval(progressFetch, 1000);
+
+        siteFetch = () => { 
+            fetch(appSiteURL, {cache: "no-cache"})
+                .then(response => response.text())
+                .then(loadSite)
+                .catch(indeterminateProgressBar)
+        }
+
+        siteCheck = setInterval(siteFetch, 2000);
+
+        window.onload = function() {
+            document.body.setAttribute('class','fadeout');
+        }
+
     </script>
 </html>
