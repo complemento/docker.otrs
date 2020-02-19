@@ -65,7 +65,7 @@
             progressBar.value = progress;
 
             if(progress == '100') {
-                clearInterval(progressBarCheck)
+                clearTimeout(progressBarCheck)
             }
 
             if(progress == '') {
@@ -80,7 +80,7 @@
 
         loadSite = (value) => {
             if( ! value.match(/^<!-- init-screen-redirection -->/) ) {
-                clearInterval(siteCheck);
+                clearTimeout(siteCheck);
                 window.location.href = appSiteURL;
             }
         }
