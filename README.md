@@ -43,27 +43,24 @@ Let's suppose you want to put it under /opt/containers/otrs:
 
 `wget https://raw.githubusercontent.com/complemento/docker.otrs/master/docker-compose.yaml`
 
-If you want to install AddOns during the Stack startup, you can create an otrs_addons folder under this directory and put the AddOns there. For example, if you want to install FAQ and OTRS ITSM:
+If you want to install AddOns during the Stack startup, you put OPM files under this directory. For example, if you want to install FAQ and OTRS ITSM:
 
-`mkdir otrs_addons`
-
-`cd otrs_addons`
+`cd app-packages`
 
 `wget ftp://ftp.otrs.org/pub/otrs/itsm/bundle6/ITSM-6.0.9.opm`
 
 `wget ftp://ftp.otrs.org/pub/otrs/packages/FAQ-6.0.8.opm`
 
-Then go back to the stack folder:
+* The ITSM Bundle, Survey and FAQ packages are default, and downloaded inside Dockerfile commands
 
-`cd /opt/containers/otrs`
 
-And finally, run your Stack!
+Run your Stack with:
 
 `docker-compose up -d`
 
 Then you can check if the system could start by it self:
 
-`docker-compose logs -f otrs`
+`docker-compose logs -f webserver`
 
 When you see this message on the log:
 *INFO success: apache2 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)*
@@ -72,7 +69,7 @@ It's because the system is running and you can access it.
 
 You can discover the container IP using the following command:
 
-`docker-compose exec otrs ip a`
+`docker-compose exec webserver ip a`
 
 And then you can access the system in your web browser:
 
@@ -106,7 +103,7 @@ If you just want to run a docker container with our OTRS 6 flavor, follow these 
 
  2. Run the following command:
 
-`docker run -d --name my_otrs_container -p 80:80 ligero/otrs`
+`docker run -d --name my_otrs_container -p 80:80 ligero/otrs-itsm`
 
 Then you can check if the system could start by it self:
 
@@ -129,15 +126,6 @@ You can discover the container IP using the following command:
 
 
 ## Other settings
-A more complex way of running this image:
-```
-docker run -d --name sd_otrs_app \
--v /opt/docker/ServiceDesk/app/mail/:/etc/mail \
--v /opt/docker/ServiceDesk/app/otrs:/opt/otrs \
--v /usr/share/zoneinfo/America/Sao_Paulo:/etc/localtime:ro \
--P --network=ligero_complemento ligero/otrs
-```
-
 You can use OTRS's SMTP protocols for sending emails. This image also contains a sendmail service since it's the recommended way to send emails in OTRS production systems.
 
 If you want to use it instead of OTRS's SMTP protocols, you may map a /etc/mail with sendmail configurations (this is for experts), or access the container and make your own sendmail configuration.
@@ -146,8 +134,8 @@ If you want to use it instead of OTRS's SMTP protocols, you may map a /etc/mail 
 You can map a volume with the addons you want to install during the container startup:
 ```
 docker run -d --name sd_otrs_app \
--v $(pwd)/my_local_addons_folder:/opt/otrs_addons \
-ligero/otrs
+-v $(pwd)/app-packages:/app-packages \
+ligero/otrs-itsm
 ```
 
 ### AddOns installed on first run
