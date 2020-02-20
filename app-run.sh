@@ -2,7 +2,10 @@
 
 INITSCREEN_DIR=/var/www/html
 PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
-START_BACKEND=${START_BACKEND:-1}
+export START_FRONTEND=${START_FRONTEND:1}
+export START_BACKEND=${START_BACKEND:-1}
+export START_PLACKUP=${START_PLACKUP:-1}
+export DEBUG_MODE=${DEBUG_MODE:-0}
 
 echo "5" > $PROGRESSBAR_FILE
 
@@ -29,11 +32,6 @@ do
     sleep 1;
 done
 
-echo "100" > $PROGRESSBAR_FILE
-
-# stop init-screen
-kill -9 $INITSCREEN_PID
-
 if [ "$START_BACKEND" == "1" ]; then
     /opt/otrs/bin/Cron.sh start otrs;
     su -c "/opt/otrs/bin/otrs.Daemon.pl start" otrs;
@@ -41,12 +39,16 @@ else
     /opt/otrs/bin/Cron.sh stop otrs;
 fi;
 
-
-if [ "$DEBUG_MODE" == "1" ]; then
-    export PLACK_ENV=development
-else
+if [ "$DEBUG_MODE" == "0" ]; then
     export PLACK_ENV=deployment
+else
+    export PLACK_ENV=development
 fi;
+
+echo "100" > $PROGRESSBAR_FILE
+
+# stop init-screen
+kill -9 $INITSCREEN_PID
 
 # run services
 exec supervisord
