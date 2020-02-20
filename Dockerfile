@@ -112,6 +112,7 @@ COPY app-packages/* /app-packages
 COPY app-init.d/* /app-init.d
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
+COPY app-healthcheck.sh /app-healthcheck.sh
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf \
@@ -138,5 +139,11 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && sed -i 's/access.log combined/access.log combined env=!dontlog/' /etc/apache2/sites-available/*
 
 EXPOSE 80
+
+# default env values for services
+ENV START_FRONTEND=1 \
+    START_BACKEND=1 \
+    START_SSHD=0 \
+    DEBUG_MODE=0
 
 CMD /app-run.sh
