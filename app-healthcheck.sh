@@ -6,6 +6,6 @@ if [ "$START_FRONTEND" == "1" ]; then
 fi;
 
 # BACKEND test
-if [ "$START_BACKEND" == "1" ]; then 
-    # TODO
-fi;
+#if [ "$START_BACKEND" == "1" ]; then 
+#    # TODO
+#fi;
