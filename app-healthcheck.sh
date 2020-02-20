@@ -9,3 +9,7 @@ fi;
 #if [ "$START_BACKEND" == "1" ]; then 
 #    # TODO
 #fi;
+
+
+# returns ok
+exit 0
