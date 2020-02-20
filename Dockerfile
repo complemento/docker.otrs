@@ -1,9 +1,9 @@
 FROM nginx:alpine-perl
 
-ENV OTRS_VERSION=6.0.23 \
-    ITSM_VERSION=6.0.23 \
-    FAQ_VERSION=6.0.22 \
-    SURVEY_VERSION=6.0.14 \
+ENV OTRS_VERSION=6.0.26 \
+    ITSM_VERSION=6.0.26 \
+    FAQ_VERSION=6.0.24 \
+    SURVEY_VERSION=6.0.17 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
