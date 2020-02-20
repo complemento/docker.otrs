@@ -6,8 +6,8 @@ PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
 PACKAGE_LIST=`ls /app-packages/*.opm`
 PACKAGE_COUNT=`ls -1 /app-packages/*.opm | wc -l`
 
-SCRIPT_LIST=`ls /app-init.d/*.sh 2> /dev/null`
-SCRIPT_COUNT=`ls -1 /app-init.d/*.sh 2> /dev/null | wc -l`
+SCRIPT_LIST=`find /app-init.d/ -type f -executable 2> /dev/null`
+SCRIPT_COUNT=`find /app-init.d/ -type f -executable 2> /dev/null | wc -l`
 
 
 
@@ -77,7 +77,7 @@ else
     # run custom init scripts
     for f in $SCRIPT_LIST; do
         echo "$0 - running $f"
-        bash "$f"
+        $f
         let ITEM_COUNT+=1
         let PROGRESS=$PROGRESS_STEP*$ITEM_COUNT+30
         echo $PROGRESS > $PROGRESSBAR_FILE
