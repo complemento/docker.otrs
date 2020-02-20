@@ -120,7 +120,6 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && a2enconf otrs custom-config app-env \
     && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
     && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
-    && echo '0 2 * * * /opt/otrs/scripts/backup.pl -d /app-backups -r 15' > var/cron/app-backups \
     && sed -i 's|$HOME/bin/otrs.Daemon.pl|. /etc/profile.d/app-env.sh; /opt/otrs/bin/otrs.Daemon.pl|' var/cron/otrs_daemon \
     && useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
     && usermod -a -G tty www-data \
