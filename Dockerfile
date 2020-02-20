@@ -1,9 +1,9 @@
 FROM ubuntu:16.04
 
-ENV OTRS_VERSION=6.0.23 \
-    ITSM_VERSION=6.0.23 \
-    FAQ_VERSION=6.0.22 \
-    SURVEY_VERSION=6.0.14 \
+ENV OTRS_VERSION=6.0.26 \
+    ITSM_VERSION=6.0.26 \
+    FAQ_VERSION=6.0.24 \
+    SURVEY_VERSION=6.0.17 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
@@ -101,17 +101,12 @@ RUN mkdir /opt/otrs \
 WORKDIR /opt/otrs
 
 # include files
-COPY Config.pm /opt/otrs/Kernel/Config.pm
-COPY app-env.conf /etc/apache2/conf-available/app-env.conf
-COPY supervisord/* /etc/supervisor/conf.d/
+COPY opt /opt
+COPY etc /etc
+COPY var /var
+COPY usr /usr
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
-COPY init-screen/* /var/www/html/
-COPY .my.cnf /root/
-COPY .my.cnf /opt/otrs/
-COPY custom-500.html.var /usr/share/apache2/error/
-COPY custom-config.conf /etc/apache2/conf-available/
-COPY motd /etc/motd
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf \
