@@ -92,7 +92,9 @@ RUN mkdir /opt/otrs \
     && mkdir -p /opt/otrs/var/article \ 
                 /opt/otrs/var/spool \
                 /opt/otrs/var/tmp \
+                /app-backups \
                 /app-packages \
+                /app-init.d \
     && cd /app-packages \
     && curl --silent -O https://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
     && curl --silent -O https://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
@@ -105,6 +107,9 @@ COPY opt /opt
 COPY etc /etc
 COPY var /var
 COPY usr /usr
+COPY app-backups/* /app-backups
+COPY app-packages/* /app-packages
+COPY app-init.d/* /app-init.d
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
 
@@ -126,8 +131,6 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && chmod 775 -R /opt/otrs \
     && mkdir -p /var/log/supervisor \
     && chmod +x /*.sh \
-    && mkdir /app-init.d/ \
-    && mkdir /app-backups/ \
     && mkdir /var/run/sshd \
     && rm /etc/update-motd.d/* \
     && chown otrs:www-data /app-backups /var/www/html/* \
