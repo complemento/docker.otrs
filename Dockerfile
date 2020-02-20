@@ -110,14 +110,11 @@ RUN mkdir /opt/otrs \
 WORKDIR /opt/otrs
 
 # include files
-COPY Config.pm /opt/otrs/Kernel/Config.pm
-COPY ./supervisor.d /etc/supervisor.d
-COPY ./nginx/conf.d/* /etc/nginx/conf.d/
+COPY etc /etc
+COPY opt /opt
+COPY var /var
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
-COPY init-screen/* /var/www/html/
-COPY .my.cnf /root/
-COPY .my.cnf /opt/otrs/
 COPY app.psgi /app.psgi
 
 
@@ -138,5 +135,10 @@ RUN sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
     && chown otrs:www-data /app-backups /var/www/html/* 
 
 EXPOSE 80
+
+# default env values for services
+ENV START_FRONTEND=1 \
+    START_BACKEND=1 \
+    DEBUG_MODE=0
 
 CMD /app-run.sh
