@@ -51,4 +51,4 @@ echo "100" > $PROGRESSBAR_FILE
 kill -9 $INITSCREEN_PID
 
 # run services
-exec supervisord
+exec supervisord -c /etc/supervisord.conf
