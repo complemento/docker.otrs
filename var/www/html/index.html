@@ -57,18 +57,18 @@
     </body>
     <script>
 
-        let appSiteURL = '/otrs/index.pl'
+let appSiteURL = '/otrs/index.pl'
         let appStatusProgressURL = 'progress.txt'
         let progressBar = document.getElementById("progressBar")
+        let box = document.getElementById("box")
         let siteCheck = null;
         let progressBarCheck = null;
+        let siteCheckTimeout = 2000; // ms
+        let progressBarCheckTimeout = 1000; // ms
+        let redirectTimeout = 500; // ms
 
         setProgressBar = (progress) => {
             progressBar.value = progress;
-
-            if(progress == '100') {
-                clearTimeout(progressBarCheck)
-            }
 
             if(progress == '') {
                 indeterminateProgressBar();
@@ -82,8 +82,7 @@
 
         loadSite = (value) => {
             if( ! value.match(/^<!-- init-screen-redirection -->/) ) {
-                clearTimeout(siteCheck);
-                window.location.href = appSiteURL;
+                setTimeout(() => {window.location.href = appSiteURL}, redirectTimeout);
             }
         }
 
@@ -92,7 +91,9 @@
                 .then(response => response.json())
                 .then(setProgressBar)
                 .catch(indeterminateProgressBar);
-            progressBarCheck = setTimeout(progressFetch, 1000);
+            if(progressBar.value != 100) {
+                progressBarCheck = setTimeout(progressFetch, progressBarCheckTimeout);
+            }
         }
 
         siteFetch = async () => { 
@@ -100,13 +101,13 @@
                 .then(response => response.text())
                 .then(loadSite)
                 .catch(indeterminateProgressBar)
-            siteCheck = setTimeout(siteFetch, 2000);
+            siteCheck = setTimeout(siteFetch, siteCheckTimeout);
         }
 
         window.onload = function() {
-            document.getElementById('box').setAttribute('class','fadeout');
-            siteFetch();
+            box.setAttribute('class','fadeout');
             progressFetch();
+            siteFetch();
         }
 
     </script>
