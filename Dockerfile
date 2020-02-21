@@ -139,6 +139,7 @@ EXPOSE 80
 # default env values for services
 ENV START_FRONTEND=1 \
     START_BACKEND=1 \
+    START_PLACKUP=1 \
     DEBUG_MODE=0
 
 CMD /app-run.sh
