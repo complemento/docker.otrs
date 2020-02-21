@@ -115,6 +115,7 @@ COPY opt /opt
 COPY var /var
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
+COPY app-healthcheck.sh /app-healthcheck.sh
 COPY app.psgi /app.psgi
 
 
