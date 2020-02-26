@@ -140,7 +140,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
 
 EXPOSE 80
 
-HEALTHCHECK --interval=10s --timeout=60s --retries=2 --start-period=1m CMD /app-healthcheck.sh
+HEALTHCHECK --interval=10s --timeout=20s --retries=2 --start-period=1m CMD /app-healthcheck.sh
 
 # default env values for services
 ENV START_FRONTEND=1 \
