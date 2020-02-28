@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# disable check on restore
+if [ ! -z "$RESTORE_DIR" ]; then 
+    exit 0
+fi;
+
 # FRONTEND test
 if [ "$START_FRONTEND" == "1" ]; then 
     curl -wfs http://localhost/otrs/index.pl?healthcheck -o /dev/null || exit 1
