@@ -1,0 +1,3 @@
+#MAILTO="root@localhost"
+SHELL=/bin/bash
+BASH_ENV=/etc/profile.d/app-env.sh

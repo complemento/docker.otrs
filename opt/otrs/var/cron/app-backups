@@ -1,1 +1,1 @@
-0 2 * * * /opt/otrs/scripts/backup.pl -d /app-backups -r 15
+0 2 * * * $HOME/scripts/backup.pl -d /app-backups -r 15
