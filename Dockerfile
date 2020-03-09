@@ -126,7 +126,6 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && a2enmod mpm_prefork headers perl include \
     && a2enconf otrs custom-config app-env \
     && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
-    && mv var/cron/otrs_daemon.dist var/cron/otrs_daemon \
     && useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
     && usermod -a -G tty www-data \
     && echo "PATH=\"$PATH:/opt/otrs/bin\"" > /etc/environment \
