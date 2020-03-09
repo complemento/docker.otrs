@@ -86,7 +86,7 @@ RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
 # OTRS code
 RUN mkdir /opt/otrs \
     && cd /opt \
-    && curl --silent -O https://ftp.otrs.org/pub/otrs/otrs-latest-${OTRS_VERSION%.*}.tar.gz \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/otrs-latest-${OTRS_VERSION%.*}.tar.gz \
     && tar zxpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
     && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz \
     && mkdir -p /opt/otrs/var/article \ 
@@ -96,9 +96,15 @@ RUN mkdir /opt/otrs \
                 /app-packages \
                 /app-init.d \
     && cd /app-packages \
-    && curl --silent -O https://ftp.otrs.org/pub/otrs/itsm/bundle${OTRS_VERSION:0:1}/ITSM-${ITSM_VERSION}.opm \
-    && curl --silent -O https://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
-    && curl --silent -O https://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/GeneralCatalog-${ITSM_VERSION}.opm \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMCore-${ITSM_VERSION}.opm \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMIncidentProblemManagement-${ITSM_VERSION}.opm \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMConfigurationManagement-${ITSM_VERSION}.opm \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMChangeManagement-${ITSM_VERSION}.opm \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMServiceLevelManagement-${ITSM_VERSION}.opm \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ImportExport-${ITSM_VERSION}.opm \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
 
 WORKDIR /opt/otrs
 
