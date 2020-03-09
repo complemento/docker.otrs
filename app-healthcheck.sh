@@ -6,7 +6,7 @@ if [ ! -z "$RESTORE_DIR" ]; then
 fi;
 
 # FRONTEND test
-if [ "$START_FRONTEND" == "1" ]; then 
+if [ "$START_FRONTEND" == "1" ] && [ -z $(pgrep httpserver.pl) ]; then 
     curl -wfs http://localhost/otrs/index.pl?healthcheck -o /dev/null || exit 1
 fi;
 
