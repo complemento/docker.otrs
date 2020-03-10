@@ -24,6 +24,9 @@ if [ -d "$RESTORE_DIR" ]; then
     cp Kernel/Config.pm{,_restored}
     mv Kernel/Config.pm{_tmp,}
 
+    # fix permissions before database test
+    perl /opt/otrs/bin/otrs.SetPermissions.pl --skip-article-dir
+
 else
 
     #
