@@ -19,6 +19,8 @@ if [ -d "$RESTORE_DIR" ]; then
 
     echo "30" > $PROGRESSBAR_FILE
 
+    otrs.Console.pl Maint::Cache::Delete
+
     cp Kernel/Config.pm{,_tmp}
     /opt/otrs/scripts/restore.pl -d /opt/otrs -b $RESTORE_DIR
     cp Kernel/Config.pm{,_restored}
