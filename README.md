@@ -14,7 +14,7 @@ OTRS is the world most popular Service Desk software, delivered by OTRS Group an
 http://www.otrs.com
 
 This Docker image is maintained by Complemento, a Brazilian company dedicate to delivery ITSM with open source software. We develop many Free and Enterprise AddOns for OTRS. You can check our website for more information:
-http://www.complemento.net.br
+http://complemento.net.br
 
 ## About this Image
 
