@@ -90,9 +90,9 @@ You can edit your docker-compose.yaml and adapt to your reallity
 | APP_DatabaseUser | root | Database user name |
 | APP_DatabasePw | 1 | Database password |
 | APP_NodeID | 1 | Set NodeID variable on OTRS, for cluster configuration. The purpose of this parameter is for scalability solutions integration like Docker Swarm or Kubernetes |
-| START_FRONTEND | 1 | Starts apache2. |
-| START_BACKEND | 1 | Starts Cron.sh and otrs.Daemon.pl. |
-| START_SSHD | 0 | Starts ssh server on port 22 |
+| START_FRONTEND | 1 | It starts apache2. |
+| START_BACKEND | 1 | It starts Cron.sh and otrs.Daemon.pl. |
+| START_SSHD | 0 | It starts ssh server on port 22 |
 | SSH_PASSWORD |  | Password for otrs user |
 | RESTORE_DIR |  | Restore backup files (this works only on first run enviroment with empty database) |
 | DEBUG_MODE | 0 | Set to 1 to show details on errors screens. |
