@@ -62,11 +62,14 @@ else
     let TOTAL_ITENS=$PACKAGE_COUNT+$SCRIPT_COUNT
     let PROGRESS_STEP=65/$TOTAL_ITENS
 
-    # install packages
+    # initial config
     otrs.Console.pl Maint::Config::Rebuild
     otrs.Console.pl Admin::Config::Update --setting-name 'Package::AllowNotVerifiedPackages' --value 1 --no-deploy
+    [ $APP_DefaultLanguage ] && otrs.Console.pl Admin::Config::Update --setting-name 'DefaultLanguage' --value $APP_DefaultLanguage --no-deploy
+    # TODO: loop on APP_* testing setting name
     otrs.Console.pl Maint::Config::Rebuild
 
+    # install packages
     for PKG in $PACKAGE_LIST; do
         echo "$0 - Installing package $PKG"
         otrs.Console.pl Admin::Package::Install --force --quiet $PKG 
