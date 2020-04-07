@@ -48,7 +48,7 @@ else
     postgresql)
 
         echo "$0 - Loading PostgreSQL data"
-        PGPASSWORD=${APP_DatabasePw}
+        export PGPASSWORD=${APP_DatabasePw}
         psql -h "${APP_DatabaseHost}" -U "${APP_DatabaseUser}" -d ${APP_Database} -a -f /opt/otrs/scripts/database/otrs-schema.postgresql.sql > /dev/null \
         && psql -h "${APP_DatabaseHost}" -U "${APP_DatabaseUser}" -d ${APP_Database} -a -f /opt/otrs/scripts/database/otrs-initial_insert.postgresql.sql > /dev/null \
         && psql -h "${APP_DatabaseHost}" -U "${APP_DatabaseUser}" -d ${APP_Database} -a -f /opt/otrs/scripts/database/otrs-schema-post.postgresql.sql > /dev/null
