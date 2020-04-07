@@ -47,9 +47,14 @@ else
 
     postgresql)
 
-        #TODO
         echo "$0 - Loading PostgreSQL data"
-        #psql -h "${APP_DatabaseHost}" -u "${APP_DatabaseUser}" -p"${APP_DatabasePw}" "CREATE DATABASE ${APP_Database}"
+        PGPASSWORD=${APP_DatabasePw}
+        psql -h "${APP_DatabaseHost}" -U "${APP_DatabaseUser}" -d ${APP_Database} -a -f /opt/otrs/scripts/database/otrs-schema.postgresql.sql > /dev/null \
+        && psql -h "${APP_DatabaseHost}" -U "${APP_DatabaseUser}" -d ${APP_Database} -a -f /opt/otrs/scripts/database/otrs-initial_insert.postgresql.sql > /dev/null \
+        && psql -h "${APP_DatabaseHost}" -U "${APP_DatabaseUser}" -d ${APP_Database} -a -f /opt/otrs/scripts/database/otrs-schema-post.postgresql.sql > /dev/null
+
+        [ $? -gt 0 ] && echo "Error loading PostgreSQL data" && exit 1;
+
         ;;
 
     *) 
