@@ -104,16 +104,21 @@ RUN mkdir /opt/otrs \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMServiceLevelManagement-${ITSM_VERSION}.opm \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ImportExport-${ITSM_VERSION}.opm \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm
+    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm \
+    && useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
+    && usermod -a -G tty www-data \
+    && chown otrs:www-data -R /opt/otrs \
+    && chmod 775 -R /opt/otrs
+
 
 WORKDIR /opt/otrs
 
 # include files
-COPY opt /opt
+COPY --chown=otrs:www-data opt /opt
+COPY --chown=otrs:www-data var /var
+COPY --chown=otrs:www-data app-backups/* /app-backups
 COPY etc /etc
-COPY var /var
 COPY usr /usr
-COPY app-backups/* /app-backups
 COPY app-packages/* /app-packages
 COPY app-init.d/* /app-init.d
 COPY app-init.sh /app-init.sh
@@ -126,18 +131,13 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && a2enmod mpm_prefork headers perl include \
     && a2enconf otrs custom-config app-env \
     && sed -i -e "s/${OTRS_VERSION%.*}.x git/${OTRS_VERSION}/g" /opt/otrs/RELEASE \
-    && useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
-    && usermod -a -G tty www-data \
     && echo "PATH=\"$PATH:/opt/otrs/bin\"" > /etc/environment \
     && echo ". /etc/environment" > /opt/otrs/.profile \
     && echo "otrs ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/otrs \
-    && chown otrs:www-data -R /opt/otrs \
-    && chmod 775 -R /opt/otrs \
     && mkdir -p /var/log/supervisor \
     && chmod +x /*.sh \
     && mkdir /var/run/sshd \
     && rm /etc/update-motd.d/* \
-    && chown otrs:www-data /app-backups /var/www/html/* \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
     && ln -sf /dev/stdout /var/log/apache2/error.log \
     && sed -i 's/access.log combined/access.log combined env=!dontlog/' /etc/apache2/sites-available/*
