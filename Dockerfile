@@ -83,9 +83,22 @@ RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
             Search::Elasticsearch 
 
 
+WORKDIR /opt/otrs
+
+# include files
+COPY --chown=otrs:www-data opt /opt
+COPY --chown=otrs:www-data var /var
+COPY --chown=otrs:www-data app-backups/* /app-backups
+COPY etc /etc
+COPY usr /usr
+COPY app-packages/* /app-packages
+COPY app-init.d/* /app-init.d
+COPY app-init.sh /app-init.sh
+COPY app-run.sh /app-run.sh
+COPY app-healthcheck.sh /app-healthcheck.sh
+
 # OTRS code
-RUN mkdir /opt/otrs \
-    && cd /opt \
+RUN cd /opt \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/otrs-latest-${OTRS_VERSION%.*}.tar.gz \
     && tar zxpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
     && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz \
@@ -109,21 +122,6 @@ RUN mkdir /opt/otrs \
     && usermod -a -G tty www-data \
     && chown otrs:www-data -R /opt/otrs \
     && chmod 775 -R /opt/otrs
-
-
-WORKDIR /opt/otrs
-
-# include files
-COPY --chown=otrs:www-data opt /opt
-COPY --chown=otrs:www-data var /var
-COPY --chown=otrs:www-data app-backups/* /app-backups
-COPY etc /etc
-COPY usr /usr
-COPY app-packages/* /app-packages
-COPY app-init.d/* /app-init.d
-COPY app-init.sh /app-init.sh
-COPY app-run.sh /app-run.sh
-COPY app-healthcheck.sh /app-healthcheck.sh
 
 # post configuration
 RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf \
