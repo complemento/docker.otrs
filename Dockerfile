@@ -82,7 +82,10 @@ RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
             Plack \
             Search::Elasticsearch 
 
-
+# set otrs user
+RUN useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
+    && usermod -a -G tty www-data 
+    
 WORKDIR /opt/otrs
 
 # include files
@@ -118,8 +121,6 @@ RUN cd /opt \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ImportExport-${ITSM_VERSION}.opm \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm \
-    && useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
-    && usermod -a -G tty www-data \
     && chown otrs:www-data -R /opt/otrs \
     && chmod 775 -R /opt/otrs
 
