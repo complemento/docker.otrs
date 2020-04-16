@@ -85,7 +85,7 @@ RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
 # set otrs user
 RUN useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
     && usermod -a -G tty www-data 
-
+    
 WORKDIR /opt/otrs
 
 # include files
@@ -94,8 +94,8 @@ COPY --chown=otrs:www-data var /var
 COPY --chown=otrs:www-data app-backups/* /app-backups
 COPY etc /etc
 COPY usr /usr
-COPY app-packages/* /app-packages
-COPY app-init.d/* /app-init.d
+COPY app-packages /app-packages
+COPY app-init.d /app-init.d
 COPY app-init.sh /app-init.sh
 COPY app-run.sh /app-run.sh
 COPY app-healthcheck.sh /app-healthcheck.sh
