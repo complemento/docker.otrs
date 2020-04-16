@@ -85,7 +85,7 @@ RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
 # set otrs user
 RUN useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
     && usermod -a -G tty www-data 
-    
+
 WORKDIR /opt/otrs
 
 # include files
@@ -108,9 +108,6 @@ RUN cd /opt \
     && mkdir -p /opt/otrs/var/article \ 
                 /opt/otrs/var/spool \
                 /opt/otrs/var/tmp \
-                /app-backups \
-                /app-packages \
-                /app-init.d \
     && cd /app-packages \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/GeneralCatalog-${ITSM_VERSION}.opm \
     && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMCore-${ITSM_VERSION}.opm \
