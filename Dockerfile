@@ -91,7 +91,7 @@ WORKDIR /opt/otrs
 # include files
 COPY --chown=otrs:www-data opt /opt
 COPY --chown=otrs:www-data var /var
-COPY --chown=otrs:www-data app-backups/* /app-backups
+COPY --chown=otrs:www-data app-backups /app-backups
 COPY etc /etc
 COPY usr /usr
 COPY app-packages /app-packages
