@@ -50,6 +50,7 @@ RUN apt-get update \
         libnet-dns-perl \
         libnet-ldap-perl \
         libssl-dev \
+        libswitch-perl \
         libtemplate-perl \
         libterm-readline-perl-perl \
         libtext-csv-xs-perl \
