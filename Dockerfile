@@ -27,6 +27,7 @@ RUN apt-get update \
         curl \
         gettext \
         git-core \
+        graphviz \
         libapache2-mod-perl2 \
         libarchive-zip-perl \
         libauthen-ntlm-perl \
@@ -41,12 +42,14 @@ RUN apt-get update \
         libencode-hanextra-perl \
         libexpat1-dev \
         libgdbm3 \
+        libgraphviz-perl \
         libio-socket-ssl-perl \
         libjson-xs-perl \
         libmail-imapclient-perl \
         libnet-dns-perl \
         libnet-ldap-perl \
         libssl-dev \
+        libswitch-perl \
         libtemplate-perl \
         libterm-readline-perl-perl \
         libtext-csv-xs-perl \
@@ -60,6 +63,7 @@ RUN apt-get update \
         perl \
         postgresql-client \
         sendmail \
+        ssh \
         sudo \
         supervisor \
         tzdata \
