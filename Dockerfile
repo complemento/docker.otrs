@@ -60,6 +60,7 @@ RUN apt-get update \
         libxml-parser-perl \
         libxml2-utils \
         libyaml-libyaml-perl \
+        lynx \
         mysql-client \
         perl \
         postgresql-client \
