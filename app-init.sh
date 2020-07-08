@@ -94,7 +94,7 @@ else
     done
 
     # root password
-    otrs.Console.pl Admin::User::SetPassword 'root@localhost' ${ROOT_PASSWORD:-ligero}
+    otrs.Console.pl Admin::User::SetPassword 'root@localhost' "${ROOT_PASSWORD:-ligero}"
     echo "default user: root@localhost"
     echo "default password: ligero"
     unset ROOT_PASSWORD
