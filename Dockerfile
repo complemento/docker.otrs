@@ -73,6 +73,8 @@ RUN deluser xfs \
         Net::DNS \
         Net::LDAP \
         Plack \
+        Redis \
+        Redis::Fast \
         Search::Elasticsearch \
         Starman \
         Template \
