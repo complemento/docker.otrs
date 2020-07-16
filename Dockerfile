@@ -21,6 +21,7 @@ RUN deluser xfs \
         curl \
         expat-dev \
         git \
+        gnupg \
         graphviz \
         libpq \
         mysql-client \
