@@ -49,6 +49,7 @@ RUN apt-get update \
         libmail-imapclient-perl \
         libnet-dns-perl \
         libnet-ldap-perl \
+        libredis-perl \
         libssl-dev \
         libswitch-perl \
         libtemplate-perl \
