@@ -74,6 +74,7 @@ RUN deluser xfs \
         Net::LDAP \
         Plack \
         Search::Elasticsearch \
+        Starman \
         Template \
         Template::Stash::XS \
         Text::CSV_XS \
