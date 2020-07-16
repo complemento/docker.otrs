@@ -1,0 +1,11 @@
+#!/bin/bash
+set -x
+SUFFIX=$1
+FILE_LOG=/opt/otrs/var/log/nytprof-${SUFFIX}.out
+REPORT_DIR=/opt/otrs/var/httpd/htdocs/profiles
+
+[ ! -f "/opt/otrs/var/log/nytprof-${SUFFIX}.out" ] && echo "$FILE_LOG not found" && exit 1
+
+[ ! -d $REPORT_DIR ] && mkdir -p $REPORT_DIR
+
+/usr/local/bin/nytprofhtml --file $FILE_LOG --out $REPORT_DIR/$SUFFIX > /dev/null 2>&1 &

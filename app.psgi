@@ -70,9 +70,11 @@ my $App = CGI::Emulate::PSGI->handler(
         warn $@ if $@;
 
         my $Profile;
+        my $ProfileSuffix;
         if ( $ENV{NYTPROF} && $ENV{REQUEST_URI} =~ /NYTProf=([\w-]+)/ ) {
             use Devel::NYTProf;
             $Profile = 1;
+            $ProfileSuffix = $1;
             DB::enable_profile("$Bin/../../var/log/nytprof-$1.out");
         }
 
@@ -86,6 +88,8 @@ my $App = CGI::Emulate::PSGI->handler(
 
         if ($Profile) {
             DB::finish_profile();
+            system("/opt/otrs/scripts/HTMLProfileReportFor $ProfileSuffix");
+            unlink "$Bin/../../var/log/nytprof-$1.out";
         }
     },
 );
