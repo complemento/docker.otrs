@@ -83,6 +83,8 @@ RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
             DateTime::TimeZone \
             HTTP::Server::Brick \
             Plack \
+            Redis \
+            Redis::Fast \
             Search::Elasticsearch 
 
 # set otrs user
