@@ -137,6 +137,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && echo "otrs ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/otrs \
     && mkdir -p /var/log/supervisor \
     && chmod +x /*.sh \
+    && chmod 775 -R /opt/otrs \
     && mkdir /var/run/sshd \
     && rm /etc/update-motd.d/* \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
