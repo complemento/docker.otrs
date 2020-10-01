@@ -37,8 +37,18 @@
             if(e) console.error(e);
         }
 
-        testStatus = (response) => {
-            return (response.status === 200) && (! response.text().match(new RegExp(`^${commentToCheckInitScreenServerRunning}`)) )
+        testStatus = async (response) => {
+
+            let statusOK
+            let responseText = await response.text()
+            try {
+                statusOK = (response.status === 200) && (! responseText.match(new RegExp(`^${commentToCheckInitScreenServerRunning}`)) )
+            } catch (e) {
+                statusOK = false
+                console.error(e)
+            }
+
+            return statusOK
         }
 
         loadSite = (doIt) => {
