@@ -18,8 +18,6 @@
         let commentToCheckInitScreenServerRunning = '<!-- init-screen-redirection -->'
         let progressBar = document.getElementById("progressBar")
         let box = document.getElementById("box")
-        let siteCheck = null;
-        let progressBarCheck = null;
         let siteCheckTimeout = 2000; // ms
         let progressBarCheckTimeout = 1000; // ms
         let redirectTimeout = 500; // ms
@@ -63,7 +61,7 @@
                 .then(setProgressBar)
                 .catch(indeterminateProgressBar);
             if(progressBar.value != 100) {
-                progressBarCheck = setTimeout(progressFetch, progressBarCheckTimeout);
+                setTimeout(progressFetch, progressBarCheckTimeout);
             } else {
                 setTimeout(indeterminateProgressBar, progressBarCheckTimeout + 3000)
             }
@@ -74,7 +72,7 @@
                 .then(testStatus)
                 .then(loadSite)
                 .catch(indeterminateProgressBar)
-            siteCheck = setTimeout(siteFetch, siteCheckTimeout);
+            setTimeout(siteFetch, siteCheckTimeout);
         }
 
         window.onload = function() {
