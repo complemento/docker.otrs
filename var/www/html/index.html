@@ -1,51 +1,7 @@
 <html>
     <head>
-        <title>OTRS</title>
-        <style type="text/css">
-            * {
-                font-family: "Open Sans",Arial,sans-serif;
-                line-height: 1.7em;
-                text-align: center;
-            }
-
-            body{
-                background-color: #ffffff;
-            }
-
-            #box {
-                -moz-transition: opacity 1.5s;
-                -webkit-transition: opacity 1.5s;
-                -o-transition: opacity 1.5s;
-                transition: opacity 1.5s;
-            }
-            
-            .fadein {
-                opacity: 0;
-            }
-
-            .fadeout {
-                opacity: 1;
-            }
-
-            h1,h2,h3 {
-                color: #355683;
-            }
-            img {
-                margin: 10% auto;
-                height: 79px;
-                display: block;
-                transform-origin: left top;
-                animation: scale 2000ms ease-in-out forwards;
-            }
-
-            .center {
-                margin: 10% auto;
-                width: 50%;
-                padding: 10px;
-            }
-
-        </style>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div class="center">
@@ -59,6 +15,7 @@
 
         let appSiteURL = '/otrs/index.pl'
         let appStatusProgressURL = 'progress.txt'
+        let commentToCheckInitScreenServerRunning = '<!-- init-screen-redirection -->'
         let progressBar = document.getElementById("progressBar")
         let box = document.getElementById("box")
         let siteCheck = null;
@@ -80,32 +37,38 @@
             if(e) console.error(e);
         }
 
-        loadSite = (value) => {
-            if( ! value.match(/^<!-- init-screen-redirection -->/) ) {
+        testStatus = (response) => {
+            return (response.status === 200) && (! response.text().match(new RegExp(`^${commentToCheckInitScreenServerRunning}`)) )
+        }
+
+        loadSite = (doIt) => {
+            if( doIt ) {
                 setTimeout(() => {window.location.href = appSiteURL}, redirectTimeout);
             }
         }
 
         progressFetch = async () => { 
             await fetch(appStatusProgressURL, {cache: "no-cache"})
-                .then(response => response.json())
+                .then(response => response.text())
                 .then(setProgressBar)
                 .catch(indeterminateProgressBar);
             if(progressBar.value != 100) {
                 progressBarCheck = setTimeout(progressFetch, progressBarCheckTimeout);
+            } else {
+                setTimeout(indeterminateProgressBar, progressBarCheckTimeout + 3000)
             }
         }
 
         siteFetch = async () => { 
             await fetch(appSiteURL, {cache: "no-cache"})
-                .then(response => response.text())
+                .then(testStatus)
                 .then(loadSite)
                 .catch(indeterminateProgressBar)
             siteCheck = setTimeout(siteFetch, siteCheckTimeout);
         }
 
         window.onload = function() {
-            box.setAttribute('class','fadeout');
+            box.classList.add('fadeout');
             progressFetch();
             siteFetch();
         }

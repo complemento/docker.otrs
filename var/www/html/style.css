@@ -1,0 +1,41 @@
+* {
+    font-family: "Open Sans",Arial,sans-serif;
+    line-height: 1.7em;
+    text-align: center;
+}
+
+body{
+    background-color: #ffffff;
+}
+
+#box {
+    -moz-transition: opacity 1.5s;
+    -webkit-transition: opacity 1.5s;
+    -o-transition: opacity 1.5s;
+    transition: opacity 1.5s;
+}
+
+.fadein {
+    opacity: 0;
+}
+
+.fadeout {
+    opacity: 1;
+}
+
+h1,h2,h3 {
+    color: #355683;
+}
+img {
+    margin: 10% auto;
+    height: 79px;
+    display: block;
+    transform-origin: left top;
+    animation: scale 2000ms ease-in-out forwards;
+}
+
+.center {
+    margin: 10% auto;
+    width: 50%;
+    padding: 10px;
+}
