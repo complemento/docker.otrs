@@ -23,10 +23,14 @@
         let redirectTimeout = 500; // ms
 
         setProgressBar = (progress) => {
-            progressBar.value = parseInt(progress);
+            try {
+                progressBar.value = progress;
 
-            if(progress == '') {
-                indeterminateProgressBar();
+                if(progress == '') {
+                    indeterminateProgressBar();
+                }
+            } catch (e) {
+                console.error(e)
             }
         }
 
