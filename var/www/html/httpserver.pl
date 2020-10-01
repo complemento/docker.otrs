@@ -4,6 +4,8 @@ use HTTP::Status;
 
 my $server = HTTP::Server::Brick->new( port => 80 );
 
+my $root_path = '/var/www/html';
+
 # these next two are equivalent
 $server->mount( '/favicon.ico' => {
     handler => sub { RC_NOT_FOUND },
@@ -15,16 +17,26 @@ $server->mount( '/otrs-web/skins/Agent/default/img/icons/product.ico' => {
 });
 
 $server->mount( '/' => {
-    path => '/var/www/html',
+    path => $root_path,
 });
 
 $server->mount( '/otrs/' => {
+    wildcard => 1,
     handler => sub {
         my ($req, $res) = @_;
-        $res->add_content('<!-- init-screen-redirection --><meta http-equiv="refresh" content="0; URL=/" />');
+        $res->header( 'Content-type', 'text/html' );
+
+        $filename = "$root_path/index.html";        
+        open(my $fh, '<:encoding(UTF-8)', $filename)
+        or die "Error to open '$filename' $!";
+        
+        while (my $row = <$fh>) {
+            chomp $row;
+            $res->add_content("$row\n");
+        }
+        
         1;
-    },
-    wildcard => 1,
+    }
 });
 
 # start accepting requests (won't return unless/until process
