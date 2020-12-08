@@ -46,7 +46,7 @@ Run your Stack with:
 
 Then you can check if the system could start by it self:
 
-`docker-compose logs -f webserver`
+`docker-compose logs -f web`
 
 When you see this message on the log:
 *INFO success: apache2 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)*
@@ -55,7 +55,7 @@ It's because the system is running and you can access it.
 
 You can discover the container IP using the following command:
 
-`docker-compose exec webserver ip a`
+`docker-compose exec web ip a`
 
 And then you can access the system in your web browser:
 
