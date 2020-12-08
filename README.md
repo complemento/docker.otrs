@@ -35,21 +35,7 @@ https://docs.docker.com/compose/install/#install-compose
 
 Download the docker-compose.yaml file from our github, to some folder of your preference. 
 
-Let's suppose you want to put it under /opt/containers/otrs:
-
-`mkdir -p /opt/containers/otrs`
-
-`cd /opt/containers/otrs`
-
-`wget https://raw.githubusercontent.com/complemento/docker.otrs/master/docker-compose.yaml`
-
-If you want to install AddOns during the Stack startup, you put OPM files under this directory. For example, if you want to install FAQ and OTRS ITSM:
-
-`cd app-packages`
-
-`wget ftp://ftp.otrs.org/pub/otrs/itsm/bundle6/ITSM-6.0.9.opm`
-
-`wget ftp://ftp.otrs.org/pub/otrs/packages/FAQ-6.0.8.opm`
+https://github.com/LigeroSmart/ligerosmart-stack
 
 * The ITSM Bundle, Survey and FAQ packages are default, and downloaded inside Dockerfile commands
 
