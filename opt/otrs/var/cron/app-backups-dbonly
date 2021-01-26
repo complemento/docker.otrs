@@ -1,0 +1,1 @@
+0 4 * * * /opt/otrs/scripts/backup.pl -t dbonly -d /opt/otrs/backup -r 1 > /dev/null
