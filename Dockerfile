@@ -85,7 +85,7 @@ RUN curl --silent -L https://cpanmin.us | perl - --sudo App::cpanminus \
             Plack \
             Redis \
             Redis::Fast \
-            Search::Elasticsearch 
+            Search::Elasticsearch@7.30 
 
 # set otrs user
 RUN useradd -d /opt/otrs -c 'OTRS user' -g www-data -s /bin/bash otrs \
