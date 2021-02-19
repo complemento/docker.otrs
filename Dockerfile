@@ -131,7 +131,7 @@ RUN ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-availab
     && mkdir /var/run/sshd \
     && rm /etc/update-motd.d/* \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
-    && ln -sf /dev/stdout /var/log/apache2/error.log \
+    && ln -sf /dev/stderr /var/log/apache2/error.log \
     && sed -i 's/access.log combined/access.log combined env=!dontlog/' /etc/apache2/sites-available/*
 
 EXPOSE 80
