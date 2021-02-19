@@ -108,8 +108,8 @@ COPY app-healthcheck.sh /app-healthcheck.sh
 # OTRS code
 RUN cd /opt \
     && curl --fail --silent --remote-name https://github.com/OTRS/otrs/archive/rel-6_0_30.tar.gz \
-    && tar zxpf rel-6_0_30.tar.gz -C /opt/otrs --strip-components=1 \
-    && rm -rf rel-6_0_30.tar.gz \
+    && tar zxpf otrs-*.tar.gz -C /opt/otrs --strip-components=1 \
+    && rm -rf otrs-*.tar.gz \
     && mkdir -p /opt/otrs/var/article \ 
                 /opt/otrs/var/spool \
                 /opt/otrs/var/tmp \
