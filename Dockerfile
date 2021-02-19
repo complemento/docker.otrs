@@ -1,9 +1,9 @@
 FROM ubuntu:16.04
 
-ENV OTRS_VERSION=6.0.26 \
-    ITSM_VERSION=6.0.26 \
-    FAQ_VERSION=6.0.24 \
-    SURVEY_VERSION=6.0.17 \
+ENV OTRS_VERSION=6.0.30 \
+    ITSM_VERSION=6.0.30 \
+    FAQ_VERSION=6.0.28 \
+    SURVEY_VERSION=6.0.20 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
@@ -107,22 +107,12 @@ COPY app-healthcheck.sh /app-healthcheck.sh
 
 # OTRS code
 RUN cd /opt \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/otrs-latest-${OTRS_VERSION%.*}.tar.gz \
-    && tar zxpf otrs-latest-${OTRS_VERSION%.*}.tar.gz -C /opt/otrs --strip-components=1 \
-    && rm -rf otrs-latest-${OTRS_VERSION%.*}.tar.gz \
+    && curl --fail --silent --remote-name https://github.com/OTRS/otrs/archive/rel-6_0_30.tar.gz \
+    && tar zxpf rel-6_0_30.tar.gz -C /opt/otrs --strip-components=1 \
+    && rm -rf rel-6_0_30.tar.gz \
     && mkdir -p /opt/otrs/var/article \ 
                 /opt/otrs/var/spool \
                 /opt/otrs/var/tmp \
-    && cd /app-packages \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/GeneralCatalog-${ITSM_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMCore-${ITSM_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMIncidentProblemManagement-${ITSM_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMConfigurationManagement-${ITSM_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMChangeManagement-${ITSM_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ITSMServiceLevelManagement-${ITSM_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/itsm/packages${OTRS_VERSION%.*.*}/ImportExport-${ITSM_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/FAQ-${FAQ_VERSION}.opm \
-    && curl --fail --silent --remote-name https://ftp.otrs.org/pub/otrs/packages/Survey-${SURVEY_VERSION}.opm \
     && chown otrs:www-data -R /opt/otrs \
     && chmod 775 -R /opt/otrs
 
