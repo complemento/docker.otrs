@@ -6,7 +6,7 @@ PROGRESSBAR_FILE=$INITSCREEN_DIR/progress.txt
 PACKAGE_LIST=`ls /app-packages/*.opm`
 PACKAGE_COUNT=`ls -1 /app-packages/*.opm | wc -l`
 
-SCRIPT_LIST=`find /app-init.d/ -type f -executable 2> /dev/null`
+SCRIPT_LIST=`find /app-init.d/ -type f -executable 2> /dev/null | sort -n`
 SCRIPT_COUNT=`find /app-init.d/ -type f -executable 2> /dev/null | wc -l`
 
 
