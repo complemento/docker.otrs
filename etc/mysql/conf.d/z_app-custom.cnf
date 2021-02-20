@@ -3,3 +3,4 @@ max-allowed-packet=64M
 
 [mysqldump]
 max-allowed-packet=64M
+column-statistics=0
