@@ -142,6 +142,7 @@ HEALTHCHECK --interval=10s --timeout=20s --retries=2 --start-period=1m CMD /app-
 ENV START_FRONTEND=1 \
     START_BACKEND=1 \
     START_SSHD=0 \
-    DEBUG_MODE=0
+    DEBUG_MODE=0 \
+    RESTORE_DIR=/app-backups/restore
 
 CMD /app-run.sh
