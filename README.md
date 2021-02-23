@@ -80,7 +80,7 @@ You can edit your docker-compose.yaml and adapt to your reallity
 | START_BACKEND | 1 | It starts Cron.sh and otrs.Daemon.pl. |
 | START_SSHD | 0 | It starts ssh server on port 22 |
 | SSH_PASSWORD |  | Password for otrs user |
-| RESTORE_DIR | /app-backups/restore | Restore backup files (this works only on first run enviroment with empty database) |
+| RESTORE_DIR | `/app-backups/restore` | Restore backup files (this works only on first run enviroment with empty database) |
 | DEBUG_MODE | 0 | Set to 1 to show details on errors screens. |
 
 ### Standalone container
