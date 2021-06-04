@@ -1,3 +1,10 @@
+# This repository is out of date. See [LigeroSmart/ligerosmart](https://github.com/LigeroSmart/ligerosmart), a fork of the OTRS project.
+#
+#
+#
+#
+#
+
 ﻿
 [![N|Solid](https://i1.wp.com/complemento.net.br/wp-content/uploads/2017/11/logo_otrs6free.png?fit=300%2C68&ssl=1)]()
 
