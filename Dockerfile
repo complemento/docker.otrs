@@ -67,11 +67,15 @@ RUN apt-get install -y  libarchive-zip-perl \
 
 RUN /opt/src/otrs/bin/otrs.SetPermissions.pl --web-group=www-data
 
+# Add a configuration to redirect the root path to the OTRS login page
+COPY redirect-default-page.conf /etc/apache2/conf-available/
+
 RUN ln -s /opt/src/otrs/scripts/apache2-httpd.include.conf /etc/apache2/sites-available/otrs.conf && \
     a2ensite otrs && \
     a2dismod mpm_event && \
     a2enmod mpm_prefork && \
-    a2enmod headers
+    a2enmod headers && \
+    a2enconf redirect-default-page
 
 # Supervisor
 RUN mkdir -p /var/log/supervisor
